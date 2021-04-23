@@ -6,11 +6,25 @@ import subprocess
 import time
 import signal
 import sys
-import lcd
 import board
 import busio
 import sparkfun_qwiictwist
 import pandas
+
+import Adafruit_CharLCD as LCD
+
+lcd_rs = 25
+lcd_en = 24
+lcd_d4 = 23
+lcd_d5 = 17
+lcd_d6 = 18
+lcd_d7 = 22
+lcd_backlight = 2
+lcd_columns = 16
+lcd_rows = 2
+
+
+lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
 
 
 
@@ -47,18 +61,53 @@ def tgChange():
     global tgid
     op25.terminate()
     frontPan.set_color(0,0,0)
+    counter = 0
+    tgidList = []
+    frontPan.count = 0;
     while True:
         count = frontPan.count
-        lcd.lcd_setCursor(0)
+        lcd.set_cursor(0,0)
         name = tgId2Name(count2tgid(count))
-        lcd.lcd_string(name)
-        
-        if frontPan.pressed:
-            tgid = count2tgid(count)
-            f = open("wl.wlist")
-            f.write(str(tgid) + "\n\r");
-            f.close()
-            break
+        lcd.message(str(name).ljust(16, ' '))
+
+        while frontPan.pressed:
+            counter += 1
+            time.sleep(0.01)
+            if counter > 1:
+                frontPan.set_color(255,0,0)
+            if counter > 300:
+                frontPan.set_color(255,255,0)
+            if counter > 500:
+                frontPan.set_color(255,255,255)
+
+        if counter > 1:
+            if counter < 300:
+                frontPan.set_color(255,0,0)
+                tgidList.append(count2tgid(count))
+                counter = 0
+                time.sleep(0.05)
+                frontPan.set_color(0,0,0)
+
+            elif counter >= 300 and counter < 500:
+                frontPan.set_color(255,255,255)
+                f = open("wl.wlist", 'w')
+                for id in tgidList:
+                    f.write(str(id) + "\n\r")
+                f.close()
+                frontPan.set_color(0,0,0)
+                break
+            
+            elif counter >= 500:
+                for x in  range(5):
+                    frontPan.set_color(255,255,255)
+                    time.sleep(0.05)
+                    frontPan.set_color(0,0,0)
+                    time.sleep(0.05)
+                f = open("wl.wlist", 'w')
+                f.write("")
+                f.close()
+                break
+
         
     op25 = subprocess.Popen("./startop25.sh", shell = False)
 
@@ -87,7 +136,7 @@ def readFile():
         CurrentState = 3
 
 
-def CurrentState():
+def CurrentStateString():
     global CurrentState
     if CurrentState == 0:
         frontPan.set_color(0,0,0)
@@ -105,33 +154,38 @@ def CurrentState():
         return "ERROR"
     
 def UpdateDisplay():
-    lcd.lcd_setCursor(0)
-    lcd.lcd_string(str(tgname).ljust(10, ' ')+str(freq).rjust(6, ' '))
-    lcd.lcd_string(str(srcaddr).ljust(10, ' ')+CurrentState().rjust(6, ' '))
+    lcd.set_cursor(0,0)
+    lcd.message(tgId2Name(tgid).ljust(10, ' ')+str(freq).rjust(6, ' '))
+    lcd.message(str(srcaddr).ljust(10, ' ')+CurrentStateString().rjust(6, ' '))
 
 
 
 def main():
+    global op25
     signal.signal(signal.SIGINT, signal_handler)
-    lcd.lcdInit()
     op25 = subprocess.Popen("./startop25.sh", shell = False)
     print(op25.pid)
     print("Currnt tg = " + str(tgid))
 
     while not frontPan.connected:
-        lcd.lcd_clear()
-        lcd.lcd_string("Front Panel not connected")
+        lcd.clear()
+        lcd.message("Front Panel not connected")
 
-    lcd.lcd_clear()
+    lcd.clear()
 
     while True:
         try:
             readFile()
         except:
             time.sleep(0.5)
-        print("FREQ: " + str(freq) + "  TGID: " + str(tgid) + "  ADDRESS: " + str(srcaddr) + "  STATE: " + CurrentState())
+        print("FREQ: " + str(freq) + "  TGID: " + str(tgid) + "  ADDRESS: " + str(srcaddr) + "  STATE: " + CurrentStateString())
         UpdateDisplay()
         if frontPan.pressed:
+            frontPan.set_color(0,0,0)
+            lcd.clear()
+            lcd.message("Change TGID List")
+            time.sleep(1)
+            lcd.lear()
             tgChange()
 
 
