@@ -1,0 +1,4 @@
+Pi 3 a+: $40
+audio amp: $10
+speaker: $5
+fan: $5
