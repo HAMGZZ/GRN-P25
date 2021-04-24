@@ -7,9 +7,11 @@ import time
 import signal
 import sys
 import board
-import busio
-import sparkfun_qwiictwist
+import busi
 import pandas
+from gpiozero import LED
+from gpiozero import Button
+from encoder import Encoder
 
 import Adafruit_CharLCD as LCD
 
@@ -29,16 +31,17 @@ lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_c
 
 
 CurrentState = 0
-tgid = 0
-freq = 0
-srcaddr = 0
-op25 = 0
+tgid = 0        # tgid of incomming transmission
+freq = 0        # frequency of incomming transmission
+srcaddr = 0     # src address of incoming transmission
+op25 = 0        #Var for OP25 program
 tgname = ""
-
-i2c = busio.I2C(board.SCL, board.SDA)
-
-frontPan = sparkfun_qwiictwist.Sparkfun_QwiicTwist(i2c)
-
+numberOfLines = 0
+red = LED(12)
+green = LED(16)
+blue = LED(20)
+button = Button(13)
+enc = Encoder(26,19)
 
 def signal_handler(sig, frame):
     global op25
@@ -46,6 +49,12 @@ def signal_handler(sig, frame):
     op25.kill()
     ex = subprocess.call("./exit.sh", shell = False)
     sys.exit(0)
+
+def file_len(fname):
+    with open(fname) as f:
+        for i, l in enumerate(f):
+            pass
+    return i + 1
 
 def tgId2Name(id):
     grn = pandas.read_csv('grn.tsv', sep=' ', header=None, names=['TGID', 'TGNAME'])
@@ -55,53 +64,72 @@ def count2tgid(count):
     grn = pandas.read_csv('grn.tsv', sep=' ', header=None, names=['TGID', 'TGNAME'])
     return grn.loc[count].at['TGID']
 
+def set_color(r, g, b):
+    if r > 1:
+        red.on()
+    else:
+        red.off()
+    if g > 1:
+        green.on()
+    else:
+        green.off()
+    if b > 1:
+        blue.on()
+    else:
+        blue.off()
+
 
 def tgChange():
     global op25
     global tgid
     op25.terminate()
-    frontPan.set_color(0,0,0)
+    set_color(0,0,0)
     counter = 0
     tgidList = []
-    frontPan.count = 0;
+    count = 0;
+    enc.value = 0;
     while True:
-        count = frontPan.count
+        count = enc.getValue()
+        if(enc.value < 0):
+            value = numberOfLines
+        if(enc.value > numberOfLines):
+            value = 0
         lcd.set_cursor(0,0)
         name = tgId2Name(count2tgid(count))
         lcd.message(str(name).ljust(16, ' '))
 
-        while frontPan.pressed:
+        while button.is_pressed:
             counter += 1
             time.sleep(0.01)
             if counter > 1:
-                frontPan.set_color(255,0,0)
+                set_color(255,0,0)
             if counter > 300:
-                frontPan.set_color(255,255,0)
+                set_color(255,255,0)
             if counter > 500:
-                frontPan.set_color(255,255,255)
+                set_color(255,255,255)
 
         if counter > 1:
             if counter < 300:
-                frontPan.set_color(255,0,0)
+                set_color(255,0,0)
                 tgidList.append(count2tgid(count))
                 counter = 0
                 time.sleep(0.05)
-                frontPan.set_color(0,0,0)
+                set_color(0,0,0)
 
             elif counter >= 300 and counter < 500:
-                frontPan.set_color(255,255,255)
+                set_color(255,255,255)
                 f = open("wl.wlist", 'w')
                 for id in tgidList:
                     f.write(str(id) + "\n\r")
                 f.close()
-                frontPan.set_color(0,0,0)
+                set_color(0,0,0)
                 break
             
             elif counter >= 500:
                 for x in  range(5):
-                    frontPan.set_color(255,255,255)
+                    set_color(255,255,255)
                     time.sleep(0.05)
-                    frontPan.set_color(0,0,0)
+                    set_color(0,0,0)
                     time.sleep(0.05)
                 f = open("wl.wlist", 'w')
                 f.write("")
@@ -139,16 +167,16 @@ def readFile():
 def CurrentStateString():
     global CurrentState
     if CurrentState == 0:
-        frontPan.set_color(0,0,0)
+        set_color(0,0,0)
         return "NO CON"
     elif CurrentState == 1:
-        frontPan.set_color(0,255,0)
+        set_color(0,255,0)
         return "IDLE"
     elif CurrentState == 2:
-        frontPan.set_color(255,0,0)
+        set_color(255,0,0)
         return "ACTIVE"
     elif CurrentState == 3:
-        frontPan.set_color(0,0,255)
+        set_color(0,0,255)
         return "VOICE"
     else:
         return "ERROR"
@@ -166,12 +194,8 @@ def main():
     op25 = subprocess.Popen("./startop25.sh", shell = False)
     print(op25.pid)
     print("Currnt tg = " + str(tgid))
-
-    while not frontPan.connected:
-        lcd.clear()
-        lcd.message("Front Panel not connected")
-
     lcd.clear()
+    numberOfLines = file_len
 
     while True:
         try:
@@ -180,8 +204,8 @@ def main():
             time.sleep(0.5)
         print("FREQ: " + str(freq) + "  TGID: " + str(tgid) + "  ADDRESS: " + str(srcaddr) + "  STATE: " + CurrentStateString())
         UpdateDisplay()
-        if frontPan.pressed:
-            frontPan.set_color(0,0,0)
+        if button.is_pressed:
+            set_color(0,0,0)
             lcd.clear()
             lcd.message("Change TGID List")
             time.sleep(1)
