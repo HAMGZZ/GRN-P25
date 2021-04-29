@@ -9,4 +9,4 @@ psu: $8
 cons: $10
 front panel: $5
 total: $128
-sale: $200 - profit: 75 
+sale: $200 - profit: $72 
