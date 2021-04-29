@@ -1,4 +1,12 @@
 Pi 3 a+: $40
-audio amp: $10
-speaker: $5
+audio amp: $6
+speaker: $8
 fan: $5
+case: $40
+rot: $3
+pot: $3
+psu: $8
+cons: $10
+front panel: $5
+total: $128
+sale: $200 - profit: 75 
