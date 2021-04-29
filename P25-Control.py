@@ -7,7 +7,7 @@ import time
 import signal
 import sys
 import board
-import busi
+import busio
 import pandas
 from gpiozero import LED
 from gpiozero import Button
@@ -26,12 +26,12 @@ lcd_green = 17
 lcd_blue  = 7  # Pin 7 is CE1
 
 
-lcd = LCD.Adafruit_RGBCharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_red, lcd_green, lcd_blue)
+lcd = LCD.Adafruit_RGBCharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, 16, 2, lcd_red, lcd_green, lcd_blue)
 
 
 
 CurrentState = 0
-tgid = 0        # tgid of incomming transmission
+tgid = 10049        # tgid of incomming transmission
 freq = 0        # frequency of incomming transmission
 srcaddr = 0     # src address of incoming transmission
 op25 = 0        #Var for OP25 program
@@ -183,7 +183,10 @@ def CurrentStateString():
     
 def UpdateDisplay():
     lcd.set_cursor(0,0)
-    lcd.message(tgId2Name(tgid).ljust(10, ' ')+str(freq).rjust(6, ' '))
+    if tgid != 0: 
+        lcd.message(tgId2Name(tgid).ljust(10, ' ')+str(freq).rjust(6, ' '))
+    else:
+        lcd.message(str(tgid).ljust(10, ' ')+str(freq).rjust(6, ' '))
     lcd.message(str(srcaddr).ljust(10, ' ')+CurrentStateString().rjust(6, ' '))
 
 
