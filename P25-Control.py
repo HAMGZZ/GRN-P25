@@ -229,7 +229,7 @@ def main():
             readFile()
         except:
             time.sleep(0.1)
-        print("FREQ: " + str(freq) + "  TGID: " + str(tgid) + "  ADDRESS: " + str(srcaddr) + "  STATE: " + CurrentStateString())
+        #print("FREQ: " + str(freq) + "  TGID: " + str(tgid) + "  ADDRESS: " + str(srcaddr) + "  STATE: " + CurrentStateString())
         if CurrentState != prevState:
             UpdateDisplay()
             prevState = CurrentState
