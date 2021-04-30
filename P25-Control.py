@@ -91,10 +91,10 @@ def tgChange():
     enc.value = 0;
     while True:
         count = enc.getValue()
-        if(enc.value < 0):
-            value = numberOfLines
-        if(enc.value > numberOfLines):
-            value = 0
+        if(count < 0):
+            count = numberOfLines
+        if(count > numberOfLines):
+            count = 0
         lcd.set_cursor(0,0)
         name = tgId2Name(count2tgid(count))
         lcd.message(str(name).ljust(16, ' '))
