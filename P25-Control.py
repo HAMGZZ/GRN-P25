@@ -187,14 +187,14 @@ def CurrentStateString():
 def UpdateDisplay():
     lcd.set_cursor(0,0)
     lcd.message(tgId2Name(distgid).ljust(11, ' ')+str(freq).rjust(5, ' '))
-    lcd.set_cursor(0,2);
+    lcd.set_cursor(0,1)
     lcd.message(str(srcaddr).ljust(10, ' ')+CurrentStateString().rjust(6, ' '))
 
 
 
 def main():
     global op25
-    lcd.set_color(0.5,0.5,0.0)
+    lcd.set_color(1,1,1)
     signal.signal(signal.SIGINT, signal_handler)
     op25 = subprocess.Popen("./startop25.sh", shell = False)
     print(op25.pid)
