@@ -155,6 +155,7 @@ def tgChange():
                 f.write("")
                 f.close()
                 lcd.set_cursor(0,0)
+                tgidList = []
                 lcd.message("WHITE LIST\nCLEARED")
                 time.sleep(1)
                 counter = 0
