@@ -90,7 +90,7 @@ def tgChange():
     tgidList = []
     count = 0;
     enc.value = 0;
-    prevcount = 0;
+    prevcount = -1;
     while True:
         count = enc.getValue()
         if(count < 0):
@@ -101,6 +101,7 @@ def tgChange():
             lcd.set_cursor(0,0)
             name = tgId2Name(count2tgid(count))
             lcd.message(str(name).ljust(16, ' '))
+            prevcount = count
 
         while button.is_pressed:
             counter += 1
@@ -121,16 +122,16 @@ def tgChange():
                 set_color(0,0,0)
                 distgid = count2tgid(count)
 
-            elif counter >= 300 and counter < 500:
+            elif counter >= 100 and counter < 300:
                 set_color(255,255,255)
-                f = open("wl.wlist", 'w')
+                f = open("wl.wlist", 'a')
                 for id in tgidList:
                     f.write(str(id) + "\n\r")
                 f.close()
                 set_color(0,0,0)
                 break
             
-            elif counter >= 500:
+            elif counter >= 300:
                 for x in  range(5):
                     set_color(255,255,255)
                     time.sleep(0.05)
@@ -139,7 +140,11 @@ def tgChange():
                 f = open("wl.wlist", 'w')
                 f.write("")
                 f.close()
-                break
+                lcd.set_cursor(0,0)
+                lcd.message("WHITE LIST\nCLEARED")
+                time.sleep(1)
+
+                
 
     
     op25 = subprocess.Popen("./startop25.sh", shell = False)
@@ -206,6 +211,7 @@ def main():
     print("Currnt tg = " + str(tgid))
     lcd.clear()
     numberOfLines = file_len("grn.tsv")
+    prevState = 0
 
     while True:
         try:
@@ -213,7 +219,10 @@ def main():
         except:
             time.sleep(0.1)
         print("FREQ: " + str(freq) + "  TGID: " + str(tgid) + "  ADDRESS: " + str(srcaddr) + "  STATE: " + CurrentStateString())
-        UpdateDisplay()
+        if CurrentState != prevState:
+            UpdateDisplay()
+            prevState = CurrentState
+
         if button.is_pressed:
             set_color(0,0,0)
             lcd.clear()
