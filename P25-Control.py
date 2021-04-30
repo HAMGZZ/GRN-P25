@@ -131,6 +131,8 @@ def tgChange():
                     f.write(str(id) + "\n\r")
                 f.close()
                 set_color(0,0,0)
+                time.sleep(0.5)
+                UpdateDisplay()
                 break
             
             elif counter >= 300:
