@@ -86,7 +86,7 @@ def tgChange():
     global distgid
     global CurrentState
     CurrentState = 0
-    op25.terminate()
+    op25.kill()
     set_color(0,0,0)
     counter = 0
     tgidList = []
