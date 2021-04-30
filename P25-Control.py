@@ -172,6 +172,7 @@ def menu():
     count = 0
     enc.value = 0
     prevcount = -1
+    time.sleep(0.5)
     while True:
         count = enc.getValue()
         if count < 0:
