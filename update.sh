@@ -1,4 +1,5 @@
-cd ~
+#!/bin/bash
+cd /home/pi/
 cd GRN-p25/
 git pull
 cd ..
