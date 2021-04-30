@@ -55,7 +55,7 @@ def get_pid(name):
     return subprocess.check_output(["pidof",name])
 
 def killp25():
-    os.kill(get_pid("python2"), signal.SIGKILL)
+    os.kill(int(get_pid("python2")), signal.SIGKILL)
 
 def file_len(fname):
     with open(fname) as f:
