@@ -114,7 +114,7 @@ def tgChange():
                 set_color(255,255,255)
 
         if counter > 1:
-            if counter < 300:
+            if counter < 100:
                 set_color(255,0,0)
                 tgidList.append(count2tgid(count))
                 counter = 0
@@ -143,6 +143,11 @@ def tgChange():
                 lcd.set_cursor(0,0)
                 lcd.message("WHITE LIST\nCLEARED")
                 time.sleep(1)
+                counter = 0
+                lcd.clear()
+                lcd.set_cursor(0,0)
+                name = tgId2Name(count2tgid(count))
+                lcd.message(str(name).ljust(16, ' '))
 
                 
 
@@ -154,6 +159,7 @@ def readFile():
     global freq
     global srcaddr
     global CurrentState
+    global distgid
     f1 = open("/tmp/ramdisk/p25Data.gzz", 'r')
     lines = f1.readlines()
     if int(lines[0]) != 0:
