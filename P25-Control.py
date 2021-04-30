@@ -53,7 +53,7 @@ def signal_handler(sig, frame):
 
 
 def killp25():
-    os.killpg(os.getpgid(op25.pid), signal.SIGTERM)
+    os.kill(op25.pid, signal.SIGTERM)
 
 def file_len(fname):
     with open(fname) as f:
