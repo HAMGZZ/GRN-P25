@@ -52,7 +52,7 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 def get_pid(name):
-    return subprocess.check_output(["pidof",name])
+    return subprocess.check_output(["pidof", "-s",name])
 
 def killp25():
     os.kill(int(get_pid("python2")), signal.SIGKILL)
