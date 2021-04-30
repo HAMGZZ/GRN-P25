@@ -32,6 +32,7 @@ lcd = LCD.Adafruit_RGBCharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, 16
 
 CurrentState = 0
 tgid = 10049        # tgid of incomming transmission
+distgid = 10049
 freq = 0        # frequency of incomming transmission
 srcaddr = 0     # src address of incoming transmission
 op25 = 0        #Var for OP25 program
@@ -147,7 +148,8 @@ def readFile():
     f1 = open("/tmp/ramdisk/p25Data.gzz", 'r')
     lines = f1.readlines()
     if int(lines[0]) != 0:
-        tgid = int(lines[0])
+        distgid = int(lines[0])
+    tgid = int(lines[0])
     freq = float(lines[2])
     f1.close
     f2 = open("/tmp/ramdisk/p25DataSrc.gzz", 'r')
@@ -184,10 +186,8 @@ def CurrentStateString():
     
 def UpdateDisplay():
     lcd.set_cursor(0,0)
-    if tgid != 0: 
-        lcd.message(tgId2Name(tgid).ljust(10, ' ')+str(freq).rjust(6, ' '))
-    else:
-        lcd.message(str(tgid).ljust(10, ' ')+str(freq).rjust(6, ' '))
+    lcd.message(tgId2Name(distgid).ljust(11, ' ')+str(freq).rjust(5, ' '))
+    lcd.set_cursor(0,2);
     lcd.message(str(srcaddr).ljust(10, ' ')+CurrentStateString().rjust(6, ' '))
 
 
