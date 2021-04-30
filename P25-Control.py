@@ -85,7 +85,6 @@ def tgChange():
     global tgid
     global distgid
     global CurrentState
-    CurrentState = 0
     op25.kill()
     set_color(0,0,0)
     counter = 0
@@ -130,8 +129,12 @@ def tgChange():
                 for id in tgidList:
                     f.write(str(id) + "\n\r")
                 f.close()
+                lcd.set_cursor(0,0)
+                lcd.message("Starting Radio...")
                 set_color(0,0,0)
                 time.sleep(0.5)
+                op25 = subprocess.Popen("./startop25.sh", shell = False)
+                time.sleep(1)
                 UpdateDisplay()
                 break
             
@@ -155,8 +158,6 @@ def tgChange():
 
                 
 
-    
-    op25 = subprocess.Popen("./startop25.sh", shell = False)
 
 def readFile():
     global tgid
