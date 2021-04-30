@@ -177,7 +177,7 @@ def menu():
         if count < 0:
             count = len(menuOption) - 1
         if count > len(menuOption) - 1:
-            count = 0:
+            count = 0
         if count != prevcount:
             lcd.set_cursor(0,1)
             lcd.message(menuOption[count])
