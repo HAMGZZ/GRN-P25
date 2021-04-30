@@ -3,6 +3,8 @@
 
 import os
 import subprocess
+from subprocess import check_output
+from subprocess import call
 import time
 import signal
 import sys
@@ -47,9 +49,12 @@ enc = Encoder(26,19)
 def signal_handler(sig, frame):
     global op25
     print('\n\rExiting')
-    call('kill -9 ' + str(op25.pid), shell=True)
+    call('kill -9 ' + str(get_pid('/usr/bin/python2')), shell=True)
     ex = subprocess.call("./exit.sh", shell = False)
     sys.exit(0)
+
+def get_pid(name):
+    return int(check_output(["pidof","-s",name]))
 
 def file_len(fname):
     with open(fname) as f:
@@ -86,7 +91,7 @@ def tgChange():
     global distgid
     global CurrentState
     op25.kill()
-    call('kill -9 ' + str(op25.pid), shell=True)
+    call('kill -9 ' + str(get_pid('/usr/bin/python2')), shell=True)
     set_color(0,0,0)
     counter = 0
     tgidList = []
