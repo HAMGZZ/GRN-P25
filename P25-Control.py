@@ -83,21 +83,24 @@ def set_color(r, g, b):
 def tgChange():
     global op25
     global tgid
+    global distgid
     op25.terminate()
     set_color(0,0,0)
     counter = 0
     tgidList = []
     count = 0;
     enc.value = 0;
+    prevcount = 0;
     while True:
         count = enc.getValue()
         if(count < 0):
-            count = numberOfLines
+            count = numberOfLines - 1
         if(count > numberOfLines):
             count = 0
-        lcd.set_cursor(0,0)
-        name = tgId2Name(count2tgid(count))
-        lcd.message(str(name).ljust(16, ' '))
+        if(count != prevcount):
+            lcd.set_cursor(0,0)
+            name = tgId2Name(count2tgid(count))
+            lcd.message(str(name).ljust(16, ' '))
 
         while button.is_pressed:
             counter += 1
@@ -116,6 +119,7 @@ def tgChange():
                 counter = 0
                 time.sleep(0.05)
                 set_color(0,0,0)
+                distgid = count2tgid(count)
 
             elif counter >= 300 and counter < 500:
                 set_color(255,255,255)
@@ -137,7 +141,7 @@ def tgChange():
                 f.close()
                 break
 
-        
+    
     op25 = subprocess.Popen("./startop25.sh", shell = False)
 
 def readFile():
@@ -194,19 +198,20 @@ def UpdateDisplay():
 
 def main():
     global op25
+    global numberOfLines
     lcd.set_color(1,1,1)
     signal.signal(signal.SIGINT, signal_handler)
     op25 = subprocess.Popen("./startop25.sh", shell = False)
     print(op25.pid)
     print("Currnt tg = " + str(tgid))
     lcd.clear()
-    numberOfLines = file_len
+    numberOfLines = file_len("grn.tsv")
 
     while True:
         try:
             readFile()
         except:
-            time.sleep(0.5)
+            time.sleep(0.1)
         print("FREQ: " + str(freq) + "  TGID: " + str(tgid) + "  ADDRESS: " + str(srcaddr) + "  STATE: " + CurrentStateString())
         UpdateDisplay()
         if button.is_pressed:
