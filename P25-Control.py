@@ -1,7 +1,7 @@
 # 26/03/2021 Lewis Hamilton
 #place inside apps folder
 
-import system
+import os
 import subprocess
 import time
 import signal
@@ -47,8 +47,7 @@ enc = Encoder(26,19)
 def signal_handler(sig, frame):
     global op25
     print('\n\rExiting')
-    system("kill -9 " + str(op25.pid))
-    system()
+    call('kill -9 ' + str(op25.pid), shell=True)
     ex = subprocess.call("./exit.sh", shell = False)
     sys.exit(0)
 
@@ -87,7 +86,7 @@ def tgChange():
     global distgid
     global CurrentState
     op25.kill()
-    system("kill -9 " + str(op25.pid))
+    call('kill -9 ' + str(op25.pid), shell=True)
     set_color(0,0,0)
     counter = 0
     tgidList = []
