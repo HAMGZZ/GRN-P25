@@ -84,6 +84,7 @@ def tgChange():
     global op25
     global tgid
     global distgid
+    global CurrentState = 0
     op25.terminate()
     set_color(0,0,0)
     counter = 0
@@ -123,7 +124,7 @@ def tgChange():
                 distgid = count2tgid(count)
 
             elif counter >= 100 and counter < 300:
-                set_color(255,255,0)
+                set_color(255,255,255)
                 f = open("wl.wlist", 'a')
                 for id in tgidList:
                     f.write(str(id) + "\n\r")
@@ -217,7 +218,7 @@ def main():
     print("Currnt tg = " + str(tgid))
     lcd.clear()
     numberOfLines = file_len("grn.tsv")
-    prevState = 0
+    prevState = -1
 
     while True:
         try:
