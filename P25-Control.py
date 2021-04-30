@@ -91,9 +91,9 @@ def tgChange():
     set_color(0,0,0)
     counter = 0
     tgidList = []
-    count = 0;
-    enc.value = 0;
-    prevcount = -1;
+    count = 0
+    enc.value = 0
+    prevcount = -1
     while True:
         count = enc.getValue()
         if(count < 0):
@@ -159,6 +159,54 @@ def tgChange():
                 lcd.message(str(name).ljust(16, ' '))
 
                 
+
+
+
+def menu():
+    menuOption = ["<   set TGID   >", "< current TGID >", "<   LCD  RGB   >"]
+    set_color(0,0,0)
+    lcd.clear()
+    lcd.set_cursor(0,0)
+    lcd.message("Menu")
+    lcd.set_cursor(0,1)
+    count = 0
+    enc.value = 0
+    prevcount = -1
+    while True:
+        count = enc.getValue()
+        if count < 0:
+            count = len(menuOption) - 1
+        if count > len(menuOption) - 1:
+            count = 0:
+        if count != prevcount:
+            lcd.set_cursor(0,1)
+            lcd.message(menuOption[count])
+            prevcount = count
+        if button.is_pressed:
+            if count == 0:
+                tgChange()
+                break
+            elif count == 1:
+                currentTg()
+                break
+            elif count == 2:
+                setRGB()
+                break
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def readFile():
@@ -239,10 +287,7 @@ def main():
         if button.is_pressed:
             set_color(0,0,0)
             lcd.clear()
-            lcd.message("Change TGID List")
-            time.sleep(1)
-            lcd.clear()
-            tgChange()
+            menu()
 
 
 if __name__ == '__main__':
