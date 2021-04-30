@@ -57,11 +57,11 @@ def file_len(fname):
     return i + 1
 
 def tgId2Name(id):
-    grn = pandas.read_csv('grn.tsv', sep=' ', header=None, names=['TGID', 'TGNAME'])
+    grn = pandas.read_csv('grn.tsv', sep='\t', header=None, names=['TGID', 'TGNAME'])
     return grn.loc[grn[grn['TGID'] == id].index[0]].at['TGNAME']
 
 def count2tgid(count):
-    grn = pandas.read_csv('grn.tsv', sep=' ', header=None, names=['TGID', 'TGNAME'])
+    grn = pandas.read_csv('grn.tsv', sep='\t', header=None, names=['TGID', 'TGNAME'])
     return grn.loc[count].at['TGID']
 
 def set_color(r, g, b):
@@ -146,7 +146,8 @@ def readFile():
     global CurrentState
     f1 = open("/tmp/ramdisk/p25Data.gzz", 'r')
     lines = f1.readlines()
-    tgid = int(lines[0])
+    if int(lines[0]) != 0:
+        tgid = int(lines[0])
     freq = float(lines[2])
     f1.close
     f2 = open("/tmp/ramdisk/p25DataSrc.gzz", 'r')
@@ -193,6 +194,7 @@ def UpdateDisplay():
 
 def main():
     global op25
+    lcd.set_color(0.5,0.5,0.0)
     signal.signal(signal.SIGINT, signal_handler)
     op25 = subprocess.Popen("./startop25.sh", shell = False)
     print(op25.pid)
@@ -212,7 +214,7 @@ def main():
             lcd.clear()
             lcd.message("Change TGID List")
             time.sleep(1)
-            lcd.lear()
+            lcd.clear()
             tgChange()
 
 
