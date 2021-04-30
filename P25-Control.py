@@ -12,7 +12,6 @@ import pandas
 from gpiozero import LED
 from gpiozero import Button
 from encoder import Encoder
-import menu
 
 import Adafruit_CharLCD as LCD
 
@@ -80,6 +79,85 @@ def set_color(r, g, b):
         blue.on()
     else:
         blue.off()
+
+
+def tgChange():
+    global op25
+    global tgid
+    global distgid
+    global CurrentState
+    op25.kill()
+    os.system("kill -9 " + str(op25.pid))
+    set_color(0,0,0)
+    counter = 0
+    tgidList = []
+    count = 0;
+    enc.value = 0;
+    prevcount = -1;
+    while True:
+        count = enc.getValue()
+        if(count < 0):
+            count = numberOfLines - 1
+        if(count > numberOfLines):
+            count = 0
+        if(count != prevcount):
+            lcd.set_cursor(0,0)
+            name = tgId2Name(count2tgid(count))
+            lcd.message(str(name).ljust(16, ' '))
+            prevcount = count
+
+        while button.is_pressed:
+            counter += 1
+            time.sleep(0.01)
+            if counter > 1:
+                set_color(255,0,0)
+            if counter > 100:
+                set_color(255,255,0)
+            if counter > 300:
+                set_color(255,255,255)
+
+        if counter > 1:
+            if counter < 100:
+                set_color(255,0,0)
+                tgidList.append(count2tgid(count))
+                counter = 0
+                time.sleep(0.05)
+                set_color(0,0,0)
+                distgid = count2tgid(count)
+
+            elif counter >= 100 and counter < 300:
+                set_color(255,255,255)
+                f = open("wl.wlist", 'a')
+                for id in tgidList:
+                    f.write(str(id) + "\n\r")
+                f.close()
+                lcd.set_cursor(0,0)
+                lcd.message("Starting Radio...")
+                set_color(0,0,0)
+                time.sleep(0.5)
+                op25 = subprocess.Popen("./startop25.sh", shell = False)
+                time.sleep(1)
+                UpdateDisplay()
+                break
+            
+            elif counter >= 300:
+                for x in  range(5):
+                    set_color(255,255,255)
+                    time.sleep(0.05)
+                    set_color(0,0,0)
+                    time.sleep(0.05)
+                f = open("wl.wlist", 'w')
+                f.write("")
+                f.close()
+                lcd.set_cursor(0,0)
+                lcd.message("WHITE LIST\nCLEARED")
+                time.sleep(1)
+                counter = 0
+                lcd.clear()
+                lcd.set_cursor(0,0)
+                name = tgId2Name(count2tgid(count))
+                lcd.message(str(name).ljust(16, ' '))
+
                 
 
 
