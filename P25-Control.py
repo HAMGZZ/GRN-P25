@@ -84,7 +84,8 @@ def tgChange():
     global op25
     global tgid
     global distgid
-    global CurrentState = 0
+    global CurrentState
+    CurrentState = 0
     op25.terminate()
     set_color(0,0,0)
     counter = 0
