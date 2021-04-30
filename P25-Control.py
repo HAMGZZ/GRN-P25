@@ -51,9 +51,11 @@ def signal_handler(sig, frame):
     ex = subprocess.call("./exit.sh", shell = False)
     sys.exit(0)
 
+def get_pid(name):
+    return subprocess.check_output(["pidof",name])
 
 def killp25():
-    os.kill(op25.pid, signal.SIGKILL)
+    os.kill(get_pid("/usr/bin/python2 "), signal.SIGKILL)
 
 def file_len(fname):
     with open(fname) as f:
