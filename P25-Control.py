@@ -118,8 +118,10 @@ def tgChange():
                 set_color(255,255,0)
             if counter > 300:
                 set_color(255,255,255)
+            print(counter)
 
         if counter > 1:
+            print(tgidList)
             if counter < 100:
                 set_color(255,0,0)
                 tgidList.append(count2tgid(count))
