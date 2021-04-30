@@ -123,7 +123,7 @@ def tgChange():
                 distgid = count2tgid(count)
 
             elif counter >= 100 and counter < 300:
-                set_color(255,255,255)
+                set_color(255,255,0)
                 f = open("wl.wlist", 'a')
                 for id in tgidList:
                     f.write(str(id) + "\n\r")
