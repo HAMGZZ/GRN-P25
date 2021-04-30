@@ -108,13 +108,12 @@ def tgChange():
             time.sleep(0.01)
             if counter > 1:
                 set_color(255,0,0)
-            if counter > 300:
+            if counter > 100:
                 set_color(255,255,0)
-            if counter > 500:
+            if counter > 300:
                 set_color(255,255,255)
 
         if counter > 1:
-            print(counter)
             if counter < 100:
                 set_color(255,0,0)
                 tgidList.append(count2tgid(count))
