@@ -29,6 +29,8 @@ lcd_blue  = 7  # Pin 7 is CE1
 lcd = LCD.Adafruit_RGBCharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, 16, 2, lcd_red, lcd_green, lcd_blue)
 
 
+grn = pandas.read_csv('grn.tsv', sep='\t', header=None, names=['TGID', 'TGNAME'])
+grnGroups = pandas.read_csv('groupList.csv', sep='\t', header=None, names=['GROUP'])
 
 CurrentState = 0
 tgid = 10049        # tgid of incomming transmission
@@ -64,11 +66,9 @@ def file_len(fname):
     return i + 1
 
 def tgId2Name(id):
-    grn = pandas.read_csv('grn.tsv', sep='\t', header=None, names=['TGID', 'TGNAME'])
     return grn.loc[grn[grn['TGID'] == id].index[0]].at['TGNAME']
 
 def count2tgid(count):
-    grn = pandas.read_csv('grn.tsv', sep='\t', header=None, names=['TGID', 'TGNAME'])
     return grn.loc[count].at['TGID']
 
 def set_color(r, g, b):
@@ -92,11 +92,20 @@ def tgChange():
     global distgid
     global CurrentState
     set_color(0,0,0)
+    lcd.clear()
     counter = 0
     tgidList = []
     count = 0
     enc.value = 0
     prevcount = -1
+    time.sleep(0.5)
+    count = 0;
+
+    while True:
+        count = enc.getValue()
+        
+    #This below is the specific tg select.
+
     while True:
         count = enc.getValue()
         if(count < 0):
@@ -106,8 +115,11 @@ def tgChange():
         if(count != prevcount):
             lcd.set_cursor(0,0)
             name = tgId2Name(count2tgid(count))
-            lcd.message(str(name).ljust(16, ' '))
-            prevcount = count
+            if groupName in name:
+                lcd.message(str(name).ljust(16, ' '))
+                prevcount = count
+            else:
+                count += 1
 
         while button.is_pressed:
             counter += 1
