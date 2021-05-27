@@ -8,29 +8,11 @@ import signal
 import sys
 import board
 import busio
-import pandas
-from gpiozero import LED
-from gpiozero import Button
-from encoder import Encoder
-
-import Adafruit_CharLCD as LCD
-
-lcd_rs = 27  # Change this to pin 21 on older revision Raspberry Pi's
-lcd_en = 22
-lcd_d4 = 25
-lcd_d5 = 24
-lcd_d6 = 23
-lcd_d7 = 18
-lcd_red   = 4
-lcd_green = 17
-lcd_blue  = 7  # Pin 7 is CE1
+import UI
 
 
-lcd = LCD.Adafruit_RGBCharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, 16, 2, lcd_red, lcd_green, lcd_blue)
 
 
-grn = pandas.read_csv('grn.tsv', sep='\t', header=None, names=['TGID', 'TGNAME'])
-grnGroups = pandas.read_csv('groupList.csv', sep='\t', header=None, names=['GROUP'])
 
 CurrentState = 0
 tgid = 10049        # tgid of incomming transmission
@@ -40,11 +22,6 @@ srcaddr = 0     # src address of incoming transmission
 op25 = 0        #Var for OP25 program
 tgname = ""
 numberOfLines = 0
-red = LED(12)
-green = LED(16)
-blue = LED(20)
-button = Button(13)
-enc = Encoder(26,19)
 
 def signal_handler(sig, frame):
     global op25
@@ -58,175 +35,6 @@ def get_pid(name):
 
 def killp25():
     os.kill(int(get_pid("python2")), signal.SIGKILL)
-
-def file_len(fname):
-    with open(fname) as f:
-        for i, l in enumerate(f):
-            pass
-    return i + 1
-
-def tgId2Name(id):
-    return grn.loc[grn[grn['TGID'] == id].index[0]].at['TGNAME']
-
-def count2tgid(count):
-    return grn.loc[count].at['TGID']
-
-def set_color(r, g, b):
-    if r > 1:
-        red.on()
-    else:
-        red.off()
-    if g > 1:
-        green.on()
-    else:
-        green.off()
-    if b > 1:
-        blue.on()
-    else:
-        blue.off()
-
-
-def tgChange():
-    global op25
-    global tgid
-    global distgid
-    global CurrentState
-    set_color(0,0,0)
-    lcd.clear()
-    counter = 0
-    tgidList = []
-    count = 0
-    enc.value = 0
-    prevcount = -1
-    time.sleep(0.5)
-    count = 0;
-
-    while True:
-        count = enc.getValue()
-        
-    #This below is the specific tg select.
-
-    while True:
-        count = enc.getValue()
-        if(count < 0):
-            count = numberOfLines - 1
-        if(count > numberOfLines):
-            count = 0
-        if(count != prevcount):
-            lcd.set_cursor(0,0)
-            name = tgId2Name(count2tgid(count))
-            if groupName in name:
-                lcd.message(str(name).ljust(16, ' '))
-                prevcount = count
-            else:
-                count += 1
-
-        while button.is_pressed:
-            counter += 1
-            time.sleep(0.01)
-            if counter > 1:
-                set_color(255,0,0)
-            if counter > 100:
-                set_color(255,255,0)
-            if counter > 300:
-                set_color(255,255,255)
-            print(counter)
-
-        if counter > 1:
-            print(tgidList)
-            if counter < 100:
-                set_color(255,0,0)
-                tgidList.append(count2tgid(count))
-                counter = 0
-                time.sleep(0.05)
-                set_color(0,0,0)
-                distgid = count2tgid(count)
-
-            elif counter >= 100 and counter < 300:
-                set_color(255,255,255)
-                f = open("wl.wlist", 'a')
-                for id in tgidList:
-                    f.write(str(id) + "\n\r")
-                f.close()
-                lcd.set_cursor(0,0)
-                lcd.message("Starting Radio...")
-                set_color(0,0,0)
-                time.sleep(0.5)
-                op25 = subprocess.Popen("./startop25.sh", shell = False)
-                time.sleep(1)
-                UpdateDisplay()
-                break
-            
-            elif counter >= 300:
-                for x in  range(5):
-                    set_color(255,255,255)
-                    time.sleep(0.05)
-                    set_color(0,0,0)
-                    time.sleep(0.05)
-                f = open("wl.wlist", 'w')
-                f.write("")
-                f.close()
-                lcd.set_cursor(0,0)
-                tgidList = []
-                lcd.message("WHITE LIST\nCLEARED")
-                time.sleep(1)
-                counter = 0
-                lcd.clear()
-                lcd.set_cursor(0,0)
-                name = tgId2Name(count2tgid(count))
-                lcd.message(str(name).ljust(16, ' '))
-
-                
-
-
-
-def menu():
-    killp25()
-    menuOption = ["<   set TGID   >", "< current TGID >", "<   LCD  RGB   >"]
-    set_color(0,0,0)
-    lcd.clear()
-    lcd.set_cursor(0,0)
-    lcd.message("Menu")
-    lcd.set_cursor(0,1)
-    count = 0
-    enc.value = 0
-    prevcount = -1
-    time.sleep(0.5)
-    while True:
-        count = enc.getValue()
-        if count < 0:
-            count = len(menuOption) - 1
-        if count > len(menuOption) - 1:
-            count = 0
-        if count != prevcount:
-            lcd.set_cursor(0,1)
-            lcd.message(menuOption[count])
-            prevcount = count
-        if button.is_pressed:
-            if count == 0:
-                tgChange()
-                break
-            elif count == 1:
-                currentTg()
-                break
-            elif count == 2:
-                setRGB()
-                break
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def readFile():
@@ -257,57 +65,35 @@ def readFile():
         CurrentState = 3
 
 
-def CurrentStateString():
-    global CurrentState
-    if CurrentState == 0:
-        set_color(0,0,0)
-        return "NO CON"
-    elif CurrentState == 1:
-        set_color(0,255,0)
-        return "IDLE"
-    elif CurrentState == 2:
-        set_color(255,0,0)
-        return "ACTIVE"
-    elif CurrentState == 3:
-        set_color(0,0,255)
-        return "VOICE"
-    else:
-        return "ERROR"
-    
-def UpdateDisplay():
-    lcd.set_cursor(0,0)
-    lcd.message(tgId2Name(distgid).ljust(11, ' ')+str(freq).rjust(5, ' '))
-    lcd.set_cursor(0,1)
-    lcd.message(str(srcaddr).ljust(10, ' ')+CurrentStateString().rjust(6, ' '))
-
 
 
 def main():
     global op25
-    global numberOfLines
-    lcd.set_color(1,1,1)
     signal.signal(signal.SIGINT, signal_handler)
     op25 = subprocess.Popen("./startop25.sh", shell = False)
     print(op25.pid)
     print("Currnt tg = " + str(tgid))
-    lcd.clear()
-    numberOfLines = file_len("grn.tsv")
     prevState = -1
-
+    ui = UI.UI()
     while True:
+        
         try:
             readFile()
         except:
             time.sleep(0.1)
         #print("FREQ: " + str(freq) + "  TGID: " + str(tgid) + "  ADDRESS: " + str(srcaddr) + "  STATE: " + CurrentStateString())
+
+
         if CurrentState != prevState:
-            UpdateDisplay()
+            ui.UpdateDisplay(CurrentState, tgid, freq, srcaddr)
             prevState = CurrentState
 
-        if button.is_pressed:
-            set_color(0,0,0)
-            lcd.clear()
-            menu()
+        if ui.button.is_pressed:
+            killp25()
+            time.sleep(0.5)
+            ui.menu()
+            time.sleep(0.5)
+            op25 = subprocess.Popen("./startop25.sh", shell = False)
 
 
 if __name__ == '__main__':
