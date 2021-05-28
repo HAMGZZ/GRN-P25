@@ -27,7 +27,7 @@ class UI:
         self.talkGroupFile = talkGroupFile
         self.talkGroupCatagoriesFile = talkGroupCatagoriesFile
         self.talkGroups = pandas.read_csv(talkGroupFile, sep='\t', header=None, names=['TGID', 'TGNAME'])
-        self.talkGroupCatagories = pandas.read_csv(talkGroupCatagoriesFile, sep=',', header=None, names=['GROUP', 'SEARCH'])
+        self.talkGroupCatagories = pandas.read_csv(talkGroupCatagoriesFile, sep=',', header=None, names=['GROUP', 'SEARCH'], dtype="string")
         self.lastHeardTG = 0
         self.prevTime = 0
     
