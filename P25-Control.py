@@ -37,7 +37,7 @@ def updateData():
     global CurrentState
     global distgid
     global dataRate
-    
+
     f1 = open("/tmp/ramdisk/p25Data.gzz", 'r')
     lines = f1.readlines()
     if int(lines[0]) != 0:
@@ -75,10 +75,10 @@ def main():
 
     op25 = subprocess.Popen("./startop25.sh", shell = False) # Start op25 subprocess
 
-    print("OP25 PID = " + op25.pid)
+    print("OP25 PID = " + str(op25.pid))
 
     prevState = -1
-    ui = UI.UI()
+    ui = UI.UI('grn.tsv', 'groupList.csv')
     
     
     while True:

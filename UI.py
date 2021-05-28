@@ -35,8 +35,10 @@ class UI:
         if id is not None or 0:
             self.lastHeardTG = id
             return self.talkGroups.loc[self.talkGroups[self.talkGroups['TGID'] == id].index[0]].at['TGNAME']
+        elif self.lastHeardTG is not None:
+            return "self.talkGroups.loc[self.talkGroups[self.talkGroups['TGID'] == self.lastHeardTG].index[0]].at['TGNAME']"
         else:
-            return self.talkGroups.loc[self.talkGroups[self.talkGroups['TGID'] == self.lastHeardTG].index[0]].at['TGNAME']
+            return " "
 
     def count2tgid(self, count):  
         return self.talkGroups.loc[count].at['TGID']
