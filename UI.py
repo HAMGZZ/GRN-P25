@@ -32,12 +32,13 @@ class UI:
         self.prevTime = 0
     
     def tgId2Name(self, id):
-        if id is not (None or 0):
-            self.lastHeardTG = id
-            return self.talkGroups.loc[self.talkGroups[self.talkGroups['TGID'] == id].index[0]].at['TGNAME']
-        elif self.lastHeardTG is not None:
-            return self.talkGroups.loc[self.talkGroups[self.talkGroups['TGID'] == self.lastHeardTG].index[0]].at['TGNAME']
-        else:
+        try:
+            if id is not (None or 0):
+                self.lastHeardTG = id
+                return self.talkGroups.loc[self.talkGroups[self.talkGroups['TGID'] == id].index[0]].at['TGNAME']
+            elif self.lastHeardTG is not None:
+                return self.talkGroups.loc[self.talkGroups[self.talkGroups['TGID'] == self.lastHeardTG].index[0]].at['TGNAME']
+        except:
             return " "
 
     def count2tgid(self, count):  
