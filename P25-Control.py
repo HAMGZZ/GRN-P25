@@ -89,10 +89,7 @@ def main():
         #print("FREQ: " + str(freq) + "  TGID: " + str(tgid) + "  ADDRESS: " + str(srcaddr) + "  STATE: " + CurrentStateString())
 
 
-        if CurrentState != prevState:
-            ui.UpdateDisplay(CurrentState, tgid, freq, srcaddr, dataRate)
-            prevState = CurrentState
-
+        ui.UpdateDisplay(CurrentState, tgid, freq, srcaddr, dataRate)
         if ui.button.is_pressed:
             killp25()
             time.sleep(0.5)
