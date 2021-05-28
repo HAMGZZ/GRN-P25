@@ -177,15 +177,17 @@ class UI:
                     self.lcd.message(str(name).ljust(16, ' '))
                     previousEncVal = value
                 else:
-                    self.enc.value += 1
+                    self.enc.value -= 1
+                    name = self.tgId2Name(self.count2tgid(value))
                     if groupName in name:
                         pass
                     else:
-                        self.enc.value -= 2
+                        self.enc.value += 2
+                        name = self.tgId2Name(self.count2tgid(value))
                         if groupName in name:
                             pass
                         else:
-                            self.enc.value += 3
+                            self.enc.value += 1
                     self.lcd.message(SpinningCursor[self.enc.value % 4].ljust(16, ' '))
                     print(value)
                     
