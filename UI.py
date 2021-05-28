@@ -176,16 +176,16 @@ class UI:
                     self.lcd.message(str(name).ljust(16, ' '))
                     previousEncVal = value
                 else:
-                    self.enc.value -= 1
+                    self.enc.value += 1
                     if groupName in name:
                         pass
                     else:
-                        self.enc.value += 2
+                        self.enc.value -= 2
                         if groupName in name:
                             pass
                         else:
-                            self.enc.value += 1
-                    self.lcd.message(SpinningCursor[self.enc.value % 4])
+                            self.enc.value += 3
+                    self.lcd.message(SpinningCursor[self.enc.value % 4].ljust(16, ' '))
                     
 
             while self.button.is_pressed:
@@ -228,7 +228,7 @@ class UI:
                         for x in  range(5):
                             self.red.on()
                             self.blue.on()
-                            self.greeb.on()
+                            self.green.on()
                             time.sleep(0.05)
                             self.red.off()
                             self.blue.off()
