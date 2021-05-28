@@ -190,6 +190,7 @@ class UI:
                             self.enc.value += 1
                     self.lcd.message(SpinningCursor[self.enc.value % 4].ljust(16, ' '))
                     print(value)
+                    print(name + "=" + groupName)
                     
 
             while self.button.is_pressed:
