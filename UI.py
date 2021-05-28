@@ -105,8 +105,10 @@ class UI:
         self.lcd.clear()
         self.lcd.set_cursor(0,0)
         self.lcd.message("Choose TG GROUP>")
+        time.sleep(1)
         self.lcd.set_cursor(0,1)
-        catNumLines = self.file_len(self.talkGroupCatagoriesFile)
+        filename = self.talkGroupCatagoriesFile
+        catNumLines = self.file_len(filename)
 
         self.enc.value = 0
         previousEncVal = -1
@@ -158,7 +160,7 @@ class UI:
         previousEncVal = -1
         buttonCounter = 0
         buttonPressedFlag = False
-        time.sleep(0.5)
+        time.sleep(1)
 
         while True:
             if self.enc.getValue() < 0:
