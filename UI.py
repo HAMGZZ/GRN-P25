@@ -27,7 +27,7 @@ class UI:
         self.talkGroupFile = talkGroupFile
         self.talkGroupCatagoriesFile = talkGroupCatagoriesFile
         self.talkGroups = pandas.read_csv(talkGroupFile, sep='\t', header=None, names=['TGID', 'TGNAME'])
-        self.talkGroupCatagories = pandas.read_csv(talkGroupCatagoriesFile, sep='\t', header=None, names=['GROUP'])
+        self.talkGroupCatagories = pandas.read_csv(talkGroupCatagoriesFile, sep=',', header=None, names=['GROUP'])
         self.lastHeardTG = 0
         self.prevTime = 0
     
@@ -123,6 +123,7 @@ class UI:
                     value = 0
                 self.lcd.set_cursor(0,1)
                 name = self.talkGroupCatagories.loc[value].at['GROUP']
+                tgsearchname = self.talkGroupCatagories.loc[value].at['SEARCH']
                 self.lcd.message(name.ljust(16, ' '))
                 previousEncVal = value
 
@@ -137,7 +138,7 @@ class UI:
             
             if buttonPressedFlag:
                 if buttonCounter < 100:
-                    self.tgChange(name)
+                    self.tgChange(tgsearchname)
                     break
                 elif buttonCounter >= 100:
                     break
@@ -175,7 +176,11 @@ class UI:
                     self.lcd.message(str(name).ljust(16, ' '))
                     previousEncVal = value
                 else:
-                    self.enc.value += 1
+                    self.enc.value -= 1
+                    if groupName in name:
+                        pass
+                    else:
+                        self.enc.value += 1
 
             while self.button.is_pressed:
                 buttonCounter += 1
@@ -187,7 +192,6 @@ class UI:
                     self.red.on()
                 if buttonCounter > 200:
                     self.blue.on()
-                print(counter)
 
             if buttonPressedFlag:
                 buttonPressedFlag = False;
