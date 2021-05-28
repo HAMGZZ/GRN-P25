@@ -92,6 +92,7 @@ def main():
 
 
         ui.UpdateDisplay(CurrentState, tgid, freq, srcaddr, dataRate)
+        print(str(CurrentState) + " " + str(tgid) + " " + str(freq) + " " + str(srcaddr) + " " + str(dataRate)
         if ui.button.is_pressed:
             killp25()
             time.sleep(0.5)
