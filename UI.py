@@ -255,11 +255,11 @@ class UI:
             if self.enc.getValue() != prevcount:
                 count = self.enc.getValue()
                 self.lcd.set_cursor(0,1)
-                self.cd.message(menuOption[count])
+                self.lcd.message(menuOption[count])
                 prevcount = count
             if self.button.is_pressed:
                 if  count == 0:
-                    self.tgChange()
+                    self.tgMenu()
                     break
                 elif count == 1:
                     self.currentTg()
