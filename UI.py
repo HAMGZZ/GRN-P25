@@ -122,7 +122,7 @@ class UI:
                 self.lcd.set_cursor(0,1)
                 encVal = self.enc.getValue()
                 name = self.talkGroupCatagories.loc[encVal].at['GROUP']
-                self.lcd.msg(name.ljust(16, ' '))
+                self.lcd.message(name.ljust(16, ' '))
                 previousEncVal = encVal
 
             while self.button.is_pressed:
