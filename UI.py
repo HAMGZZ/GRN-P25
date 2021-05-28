@@ -246,9 +246,11 @@ class UI:
                         tgidList = []
                         self.lcd.message("WHITE LIST\nCLEARED")
                         time.sleep(1)
-                        counter = 0
+                        buttonCounter = 0
                         self.lcd.clear()
                         self.lcd.set_cursor(0,0)
+                        self.lcd.message("Choose TG      >")
+                        self.lcd.set_cursor(0,1)
                         name = self.tgId2Name(self.count2tgid(self.enc.value))
                         self.lcd.message(str(name).ljust(16, ' '))
 
