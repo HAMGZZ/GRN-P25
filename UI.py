@@ -72,11 +72,22 @@ class UI:
             return "ERROR"
         
 
-    def UpdateDisplay(self, currentState, tgid, freq, srcaddr, bitrate = 0):
-        self.lcd.set_cursor(0,0)
-        self.lcd.message(str(srcaddr).ljust(10, ' ')+str(bitrate).rjust(6, ' '))
-        self.lcd.set_cursor(0,1)
-        self.lcd.message(self.tgId2Name(tgid).ljust(10, ' ')+self.CurrentStateString(currentState).rjust(6, ' '))
+    def UpdateDisplay(self, currentState, tgid, freq, srcaddr, bitrate = 0, displayOption = 0):
+        if displayOption == 0:
+            self.lcd.set_cursor(0,0)
+            self.lcd.message(str(srcaddr).ljust(10, ' ') + str(bitrate).rjust(6, ' '))
+            self.lcd.set_cursor(0,1)
+            self.lcd.message(self.tgId2Name(tgid).ljust(10, ' ') + self.CurrentStateString(currentState).rjust(6, ' '))
+        elif displayOption == 1:
+            self.lcd.set_cursor(0,0)
+            self.lcd.message(self.tgId2Name(tgid).ljust(11, ' ') + str(freq).rjust(5, ' '))
+            self.lcd.set_cursor(0,1)
+            self.lcd.message(str(srcaddr).ljust(10, ' ') + self.CurrentStateString().rjust(6, ' '))
+        elif displayOption == 3:
+            self.lcd.set_cursor(0,0)
+            self.lcd.message(str(srcaddr).ljust(10, ' ') + str(bitrate).rjust(6, ' '))
+            self.lcd.set_cursor(0,1)
+            self.lcd.message(self.tgId2Name(tgid).ljust(10, ' ') + str(freq).rjust(6, ' '))
     
     def file_len(fname):
         with open(fname) as f:
@@ -222,7 +233,7 @@ class UI:
                         self.lcd.message(str(name).ljust(16, ' '))
 
     def menu(self):
-        menuOption = ["<   set TGID   >", "< current TGID >", "<   LCD  RGB   >"]
+        menuOption = ["<   SET TGID   >", "< CURRENT TGID >", "<   LCD  RGB   >", "<   DISPLAY    >"]
         self.red.off()
         self.blue.off()
         self.green.off()
@@ -252,5 +263,8 @@ class UI:
                     break
                 elif count == 2:
                     self.setRGB()
+                    break
+                elif count == 3:
+                    self.setDisplay()
                     break
     
