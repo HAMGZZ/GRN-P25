@@ -173,7 +173,7 @@ class UI:
                 name = self.tgId2Name(self.count2tgid(value))
                 if groupName in name:
                     self.lcd.message(str(name).ljust(16, ' '))
-                    previousEncVal = count
+                    previousEncVal = value
                 else:
                     self.enc.value += 1
 
