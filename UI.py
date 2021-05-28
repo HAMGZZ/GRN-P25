@@ -162,7 +162,7 @@ class UI:
         buttonCounter = 0
         buttonPressedFlag = False
         time.sleep(1)
-
+        SpinningCursor = ['\\', '|', '/', '-']
         while True:
             value = self.enc.getValue()
             if value != previousEncVal :
@@ -180,7 +180,11 @@ class UI:
                     if groupName in name:
                         pass
                     else:
-                        self.enc.value += 1
+                        self.enc.value += 2
+                        if groupName not in name:
+                            self.enc.value += 1
+                    print(SpinningCursor[self.enc.value % 4])
+                    
 
             while self.button.is_pressed:
                 buttonCounter += 1
