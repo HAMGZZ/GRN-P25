@@ -6,22 +6,15 @@ import subprocess
 import time
 import signal
 import sys
-import board
-import busio
 import UI
 
 
-
-
-
 CurrentState = 0
-tgid = 10049        # tgid of incomming transmission
-distgid = 10049
+tgid = 0        # tgid of incomming transmission
 freq = 0        # frequency of incomming transmission
 srcaddr = 0     # src address of incoming transmission
-op25 = 0        #Var for OP25 program
-tgname = ""
-numberOfLines = 0
+op25 = 0        # Var for OP25 program
+dataRate = 0    # Used to calculate the rate of information comming in and thus the signal strength as well.
 
 def signal_handler(sig, frame):
     global op25
@@ -37,12 +30,14 @@ def killp25():
     os.kill(int(get_pid("python2")), signal.SIGKILL)
 
 
-def readFile():
+def updateData():
     global tgid
     global freq
     global srcaddr
     global CurrentState
     global distgid
+    global dataRate
+    
     f1 = open("/tmp/ramdisk/p25Data.gzz", 'r')
     lines = f1.readlines()
     if int(lines[0]) != 0:
@@ -50,11 +45,16 @@ def readFile():
     tgid = int(lines[0])
     freq = float(lines[2])
     f1.close
+
     f2 = open("/tmp/ramdisk/p25DataSrc.gzz", 'r')
     lines = f2.readlines()
     srcaddr = int(lines[0])
     f2.close;
 
+    f3 = open("/tmp/ramdisk/p25DataRate.gzz", 'r')
+    lines = f1.readlines()
+    dataRate = int(lines[0])
+    f3.close
     if freq == 0:
         CurrentState = 0
     else:
@@ -68,24 +68,29 @@ def readFile():
 
 
 def main():
+    print("LEWIS HAMILTON 2021 - P25 Receiver - Aimed at the NSW GRN")
     global op25
+
     signal.signal(signal.SIGINT, signal_handler)
-    op25 = subprocess.Popen("./startop25.sh", shell = False)
-    print(op25.pid)
-    print("Currnt tg = " + str(tgid))
+
+    op25 = subprocess.Popen("./startop25.sh", shell = False) # Start op25 subprocess
+
+    print("OP25 PID = " + op25.pid)
+
     prevState = -1
     ui = UI.UI()
+    
+    
     while True:
-        
         try:
-            readFile()
+            updateData()
         except:
             time.sleep(0.1)
         #print("FREQ: " + str(freq) + "  TGID: " + str(tgid) + "  ADDRESS: " + str(srcaddr) + "  STATE: " + CurrentStateString())
 
 
         if CurrentState != prevState:
-            ui.UpdateDisplay(CurrentState, tgid, freq, srcaddr)
+            ui.UpdateDisplay(CurrentState, tgid, freq, srcaddr, dataRate)
             prevState = CurrentState
 
         if ui.button.is_pressed:

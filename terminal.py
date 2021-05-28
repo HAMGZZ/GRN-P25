@@ -378,6 +378,9 @@ class curses_terminal(threading.Thread):
             CZFile = open("/tmp/ramdisk/p25DataSrc.gzz", 'w')
             CZFile.writelines([str(srcaddr) + "\r\n"])
             CZFile.close()
+            CZFile = open("/tmp/ramdisk/p25DataRate.gzz", 'w')
+            CZFile.writelines([str(msg[current_nac]['tsbks']) + "\r\n"])
+            CZFile.close()
             # CZGZZ end of file change
         elif msg['json_type'] == 'change_freq': # from rx.py trunking
             s = 'Frequency %f' % (msg['freq'] / 1000000.0)
