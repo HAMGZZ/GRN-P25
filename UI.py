@@ -32,7 +32,7 @@ class UI:
         self.prevTime = 0
     
     def tgId2Name(self, id):
-        if id is not Null or 0:
+        if id is not None or 0:
             self.lastHeardTG = id
             return self.talkGroups.loc[self.talkGroups[self.talkGroups['TGID'] == id].index[0]].at['TGNAME']
         else:
