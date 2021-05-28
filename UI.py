@@ -92,7 +92,7 @@ class UI:
             self.lcd.set_cursor(0,1)
             self.lcd.message(self.tgId2Name(tgid).ljust(10, ' ') + str(freq).rjust(6, ' '))
     
-    def file_len(fname):
+    def file_len(self, fname):
         with open(fname) as f:
             for i, l in enumerate(f):
                 pass
@@ -107,8 +107,7 @@ class UI:
         self.lcd.message("Choose TG GROUP>")
         time.sleep(1)
         self.lcd.set_cursor(0,1)
-        filename = self.talkGroupCatagoriesFile
-        catNumLines = self.file_len(filename)
+        catNumLines = self.file_len(self.talkGroupCatagoriesFile)
 
         self.enc.value = 0
         previousEncVal = -1
