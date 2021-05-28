@@ -116,7 +116,7 @@ class UI:
         while True:
             if self.enc.getValue() < 0:
                 self.enc.value = catNumLines - 1
-            elif self.enc.getValue() > catNumLines:
+            elif self.enc.getValue() >= catNumLines:
                 self.enc.value = 0
             if self.enc.getValue() != previousEncVal:
                 self.lcd.set_cursor(0,1)
