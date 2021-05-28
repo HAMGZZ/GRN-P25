@@ -113,6 +113,7 @@ class UI:
         previousEncVal = -1
         buttonCounter = 0
         buttonPressedFlag = False
+        name = ""
         while True:
             if self.enc.getValue() < 0:
                 self.enc.value = catNumLines - 1
@@ -136,7 +137,7 @@ class UI:
             
             if buttonPressedFlag:
                 if buttonCounter < 100:
-                    self.tgChange()
+                    self.tgChange(name)
                     break
                 elif buttonCounter >= 100:
                     break
