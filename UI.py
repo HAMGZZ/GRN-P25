@@ -181,9 +181,11 @@ class UI:
                         pass
                     else:
                         self.enc.value += 2
-                        if groupName not in name:
+                        if groupName in name:
+                            pass
+                        else:
                             self.enc.value += 1
-                    print(SpinningCursor[self.enc.value % 4])
+                    self.lcd.message(SpinningCursor[self.enc.value % 4])
                     
 
             while self.button.is_pressed:
