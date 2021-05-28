@@ -149,7 +149,7 @@ class UI:
         self.green.off()
         self.lcd.clear()
         self.lcd.set_cursor(0,0)
-        self.lcd.message("Choose TG GROUP>")
+        self.lcd.message("Choose TG      >")
         self.lcd.set_cursor(0,1)
         
         tgidList = []
@@ -165,7 +165,7 @@ class UI:
         while True:
             if self.enc.getValue() < 0:
                 self.enc.value = tgNumLines - 1
-            if self.enc.getValue() > tgNumLines:
+            if self.enc.getValue() >= tgNumLines:
                 self.enc.value = 0
             if self.enc.getValue() != previousEncVal:
                 count = self.enc.getValue()
