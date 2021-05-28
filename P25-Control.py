@@ -52,9 +52,12 @@ def updateData():
     f2.close;
 
     f3 = open("/tmp/ramdisk/p25DataRate.gzz", 'r')
-    lines = f1.readlines()
+    lines = f3.readlines()
     dataRate = int(lines[0])
     f3.close
+    
+    
+
     if freq == 0:
         CurrentState = 0
     else:
@@ -63,6 +66,7 @@ def updateData():
         CurrentState = 2
     if srcaddr != 0 and tgid != 0:
         CurrentState = 3
+    print(CurrentState)
 
 
 
@@ -92,7 +96,7 @@ def main():
 
 
         ui.UpdateDisplay(CurrentState, tgid, freq, srcaddr, dataRate)
-        print(str(CurrentState) + " " + str(tgid) + " " + str(freq) + " " + str(srcaddr) + " " + str(dataRate)
+        print(str(CurrentState) + " " + str(tgid) + " " + str(freq) + " " + str(srcaddr) + " " + str(dataRate))
         if ui.button.is_pressed:
             killp25()
             time.sleep(0.5)
