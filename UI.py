@@ -75,7 +75,7 @@ class UI:
             return "ERROR"
         
 
-    def UpdateDisplay(self, currentState, tgid, freq, srcaddr, bitrate = 0, displayOption = 0):
+    def UpdateDisplay(self, currentState, tgid, freq, srcaddr, bitrate, displayOption = 0):
         if displayOption == 0:
             self.lcd.set_cursor(0,0)
             self.lcd.message(str(srcaddr).ljust(10, ' ') + str(bitrate).rjust(6, ' '))

@@ -70,14 +70,16 @@ def updateData():
 def main():
     print("LEWIS HAMILTON 2021 - P25 Receiver - Aimed at the NSW GRN")
     global op25
-
+    global CurrentState
+    global dataRate
+    global srcaddr
+    global freq
     signal.signal(signal.SIGINT, signal_handler)
 
     op25 = subprocess.Popen("./startop25.sh", shell = False) # Start op25 subprocess
 
     print("OP25 PID = " + str(op25.pid))
 
-    prevState = -1
     ui = UI.UI('grn.tsv', 'groupList.csv')
     
     
