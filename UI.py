@@ -28,10 +28,15 @@ class UI:
         self.talkGroupCatagoriesFile = talkGroupCatagoriesFile
         self.talkGroups = pandas.read_csv(talkGroupFile, sep='\t', header=None, names=['TGID', 'TGNAME'])
         self.talkGroupCatagories = pandas.read_csv(talkGroupCatagoriesFile, sep='\t', header=None, names=['GROUP'])
+        self.lastHeardTG = 0
         self.prevTime = 0
     
     def tgId2Name(self, id):
-        return self.talkGroups.loc[self.talkGroups[self.talkGroups['TGID'] == id].index[0]].at['TGNAME']
+        if id is not Null or 0:
+            self.lastHeardTG = id
+            return self.talkGroups.loc[self.talkGroups[self.talkGroups['TGID'] == id].index[0]].at['TGNAME']
+        else:
+            return self.talkGroups.loc[self.talkGroups[self.talkGroups['TGID'] == self.lastHeardTG].index[0]].at['TGNAME']
 
     def count2tgid(self, count):  
         return self.talkGroups.loc[count].at['TGID']
@@ -66,11 +71,12 @@ class UI:
             self.blue.off()
             return "ERROR"
         
+
     def UpdateDisplay(self, currentState, tgid, freq, srcaddr, bitrate = 0):
         self.lcd.set_cursor(0,0)
-        self.lcd.message(self.tgId2Name(tgid).ljust(11, ' ')+str(freq).rjust(5, ' '))
+        self.lcd.message(str(srcaddr).ljust(10, ' ')+str(bitrate).rjust(6, ' '))
         self.lcd.set_cursor(0,1)
-        self.lcd.message(str(srcaddr).ljust(10, ' ')+self.CurrentStateString(currentState).rjust(6, ' '))
+        self.lcd.message(self.tgId2Name(tgid).ljust(10, ' ')+self.CurrentStateString(currentState).rjust(6, ' '))
     
     def file_len(fname):
         with open(fname) as f:
