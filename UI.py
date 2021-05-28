@@ -115,16 +115,16 @@ class UI:
         buttonPressedFlag = False
         name = ""
         while True:
-            if self.enc.getValue() < 0:
-                self.enc.value = catNumLines - 1
-            elif self.enc.getValue() >= catNumLines:
-                self.enc.value = 0
-            if self.enc.getValue() != previousEncVal:
+            value = self.enc.getValue()
+            if value != previousEncVal :
+                if value < 0:
+                    value = catNumLines - 1
+                if value >= catNumLines:
+                    value = 0
                 self.lcd.set_cursor(0,1)
-                encVal = self.enc.getValue()
-                name = self.talkGroupCatagories.loc[encVal].at['GROUP']
+                name = self.talkGroupCatagories.loc[value].at['GROUP']
                 self.lcd.message(name.ljust(16, ' '))
-                previousEncVal = encVal
+                previousEncVal = value
 
             while self.button.is_pressed:
                 buttonCounter += 1
@@ -163,14 +163,14 @@ class UI:
         time.sleep(1)
 
         while True:
-            if self.enc.getValue() < 0:
-                self.enc.value = tgNumLines - 1
-            if self.enc.getValue() >= tgNumLines:
-                self.enc.value = 0
-            if self.enc.getValue() != previousEncVal:
-                count = self.enc.getValue()
+            value = self.enc.getValue()
+            if value != previousEncVal :
+                if value < 0:
+                    value = tgNumLines - 1
+                if value >= tgNumLines:
+                    value = 0
                 self.lcd.set_cursor(0,1)
-                name = self.tgId2Name(self.count2tgid(count))
+                name = self.tgId2Name(self.count2tgid(value))
                 if groupName in name:
                     self.lcd.message(str(name).ljust(16, ' '))
                     previousEncVal = count
