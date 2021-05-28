@@ -162,7 +162,6 @@ class UI:
         buttonCounter = 0
         buttonPressedFlag = False
         time.sleep(1)
-        SpinningCursor = ['\\', '|', '/', '-']
         while True:
             value = self.enc.getValue()
             if value != previousEncVal :
@@ -171,21 +170,10 @@ class UI:
                 if value >= tgNumLines:
                     value = 0
                 self.lcd.set_cursor(0,1)
+                value = self.talkGroups[self.talkGroups['TGNAME'].str.contains(groupName,case=False)].index.values
                 name = self.tgId2Name(self.count2tgid(value))
-                if groupName in name:
-                    self.lcd.message(str(name).ljust(16, ' '))
-                    previousEncVal = value
-                else:
-                    self.enc.value += 1
-                    if groupName in name:
-                        pass
-                    else:
-                        self.enc.value -= 2
-                        if groupName in name:
-                            pass
-                        else:
-                            self.enc.value += 3
-                    self.lcd.message(SpinningCursor[self.enc.value % 4].ljust(16, ' '))
+                self.lcd.message(str(name).ljust(16, ' '))
+                previousEncVal = value
                     
 
             while self.button.is_pressed:
