@@ -35,9 +35,8 @@ class Data:
             self.dataRate = int(lines[0])
             f3.close
 
-            print(time.time - self.updateTimeFrame)
-            if time.time - self.updateTimeFrame >= 2:
-                self.updateTimeFrame = time.time
+            if time.time() - self.updateTimeFrame >= 2:
+                self.updateTimeFrame = time.time()
                 difference = self.dataRate - self.previousDataRate
                 self.previousDataRate = self.dataRate
                 # Check if we got even 1 packet to turn on con led
