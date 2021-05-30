@@ -298,5 +298,3 @@ class UI:
                     self.setDisplay()
                     break
     
-
-    def menuFuction(self, menuTitle, menuOptionsList, )
