@@ -30,7 +30,17 @@ class UI:
         self.talkGroupCatagories = pandas.read_csv(talkGroupCatagoriesFile, sep=',', header=None, names=['GROUP', 'SEARCH'], dtype="string")
         self.lastHeardTG = 0
         self.prevTime = 0
-    
+        self.custom_towerSymbol = [	31,21,14,4,4,4,4 ]
+        self.custom_sigNone = [ 0,14,25,21,19,14,0 ]
+        self.custom_sigOne = [ 0,0,0,0,0,16,16 ]
+        self.custom_sigTwo = [ 0,0,0,0,8,24,24 ]
+        self.custom_sigThree = [ 0,0,0,4,12,28,28 ]
+        self.custom_sigFour = [ 0,0,2,6,14,30,30 ]
+        self.custom_sigFive = [ 0,1,3,7,15,31,31 ]
+        self.custom_signalArray = [self.custom_sigNone, self.custom_sigOne, self.custom_sigTwo, self.custom_sigThree, self.custom_sigFour, self.custom_sigFive, self.custom_towerSymbol]
+        for i in range(len(self.custom_signalArray)):
+            self.lcd.create_char(i, self.custom_signalArray[i])
+
     def tgId2Name(self, id):
         try:
             if id is not (None or 0):
@@ -62,7 +72,7 @@ class UI:
             self.red.on()
             self.green.on()
             self.blue.off()
-            return "ACTIVE"
+            return "DATA"
         elif CurrentState == 3:
             self.red.on()
             self.green.on()
@@ -75,10 +85,10 @@ class UI:
             return "ERROR"
         
 
-    def UpdateDisplay(self, currentState, tgid, freq, srcaddr, bitrate, displayOption = 0):
+    def UpdateDisplay(self, currentState, tgid, freq, srcaddr, bitrate, signalStrength, displayOption = 0):
         if displayOption == 0:
             self.lcd.set_cursor(0,0)
-            self.lcd.message(str(srcaddr).ljust(10, ' ') + str(bitrate).rjust(6, ' '))
+            self.lcd.message(str(srcaddr).ljust(14, ' ') + ('\x0' + str(signalStrength)) +('\x06'))
             self.lcd.set_cursor(0,1)
             self.lcd.message(self.tgId2Name(tgid).ljust(10, ' ') + self.CurrentStateString(currentState).rjust(6, ' '))
         elif displayOption == 1:
@@ -207,8 +217,8 @@ class UI:
                 if buttonCounter > 1:
                     print(tgidList)
                     if buttonCounter < 100:
-                        if self.count2tgid(count) not in tgidList:
-                            tgidList.append(self.count2tgid(count))
+                        if self.count2tgid(value) not in tgidList:
+                            tgidList.append(self.count2tgid(value))
                             buttonCounter = 0
                             self.enc.value = 0
                             time.sleep(0.05)
@@ -288,3 +298,5 @@ class UI:
                     self.setDisplay()
                     break
     
+
+    def menuFuction(self, menuTitle, menuOptionsList, )
