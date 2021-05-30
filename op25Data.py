@@ -37,7 +37,7 @@ class Data:
 
 
             if time.time - self.updateTimeFrame >= 2:
-                updateTimeFrame = time.time
+                self.updateTimeFrame = time.time
                 difference = self.dataRate - self.previousDataRate
                 # Check if we got even 1 packet to turn on con led
                 if difference > 0:
