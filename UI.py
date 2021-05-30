@@ -88,7 +88,7 @@ class UI:
     def UpdateDisplay(self, currentState, tgid, freq, srcaddr, bitrate, signalStrength, displayOption = 0):
         if displayOption == 0:
             self.lcd.set_cursor(0,0)
-            self.lcd.message(str(srcaddr).ljust(14, ' ') + ('\x0' + str(signalStrength)) +('\x06'))
+            self.lcd.message(str(srcaddr).ljust(14, ' ') + (r'\x0' + str(signalStrength)) +(r'\x06'))
             self.lcd.set_cursor(0,1)
             self.lcd.message(self.tgId2Name(tgid).ljust(10, ' ') + self.CurrentStateString(currentState).rjust(6, ' '))
         elif displayOption == 1:
