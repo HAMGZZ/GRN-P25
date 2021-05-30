@@ -35,7 +35,7 @@ class Data:
             self.dataRate = int(lines[0])
             f3.close
 
-
+            print(time.time - self.updateTimeFrame)
             if time.time - self.updateTimeFrame >= 2:
                 self.updateTimeFrame = time.time
                 difference = self.dataRate - self.previousDataRate
