@@ -90,7 +90,7 @@ class UI:
             self.lcd.set_cursor(0,0)
             self.lcd.message(str(srcaddr).ljust(14, ' '))
             self.lcd.message(str(signalStrength.to_bytes(1, byteorder='big')))
-            self.lcd.message('\x06')
+            self.lcd.message(r'\x06')
             self.lcd.set_cursor(0,1)
             self.lcd.message(self.tgId2Name(tgid).ljust(10, ' ') + self.CurrentStateString(currentState).rjust(6, ' '))
         elif displayOption == 1:

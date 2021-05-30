@@ -39,6 +39,7 @@ class Data:
             if time.time - self.updateTimeFrame >= 2:
                 self.updateTimeFrame = time.time
                 difference = self.dataRate - self.previousDataRate
+                self.previousDataRate = self.dataRate
                 # Check if we got even 1 packet to turn on con led
                 if difference > 0:
                     self.isCon = True
@@ -55,6 +56,8 @@ class Data:
                     self.signalStrength = 1
                 else:
                     self.signalStrength = 0
+                print(difference)
+                print(self.isCon)
         except:
             pass
         if not self.isCon:
