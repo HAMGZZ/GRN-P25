@@ -42,6 +42,8 @@ class Data:
                 # Check if we got even 1 packet to turn on con led
                 if difference > 0:
                     self.isCon = True
+                else:
+                    self.isCon = False
                 #Map data rate to a signal strength number 
                 if difference > 30:
                     self.signalStrength = 5
