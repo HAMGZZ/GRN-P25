@@ -264,6 +264,35 @@ class UI:
                         name = self.tgId2Name(self.count2tgid(self.enc.value))
                         self.lcd.message(str(name).ljust(16, ' '))
 
+    def currentTg(self):
+        whiteList = pandas.read_csv('wl.wlist', sep=',', header=None, names=['TG'], dtype="string")
+        fileLen = self.file_len('wl.wlist')
+        value = self.enc.getValue()
+        previousEncVal = 0
+        value = self.enc.getValue()
+        self.enc.value = 0
+        buttonCounter = 0
+        while True:
+            value = self.enc.getValue()
+            if value != previousEncVal :
+                if value < 0:
+                    value = fileLen - 1
+                if value >= fileLen:
+                    value = 0
+                self.lcd.set_cursor(0,1)
+                name = self.tgId2Name(whiteList.loc[value].at['TG'])
+                self.lcd.message(str(name).ljust(16, ' '))
+                previousEncVal = value
+            while self.button.is_pressed:
+                buttonCounter += 1
+                time.sleep(0.01)
+                if buttonCounter > 1:
+                    self.green.on()
+
+            if buttonCounter > 1:
+                break
+
+
     def menu(self):
         menuOption = ["<   SET TGID   >", "< CURRENT TGID >", "<   LCD  RGB   >", "<   DISPLAY    >"]
         self.red.off()
@@ -275,6 +304,7 @@ class UI:
         self.lcd.set_cursor(0,1)
         self.enc.value = 0
         prevcount = -1
+        buttonCounter = 0
         time.sleep(0.5)
         while True:
             if self.enc.getValue() < 0:
@@ -286,7 +316,15 @@ class UI:
                 self.lcd.set_cursor(0,1)
                 self.lcd.message(menuOption[count])
                 prevcount = count
-            if self.button.is_pressed:
+            while self.button.is_pressed:
+                buttonCounter += 1
+                time.sleep(0.01)
+                if buttonCounter > 1:
+                    self.green.on()
+                elif buttonCounter > 100:
+                    self.red.on()
+            
+            if buttonCounter > 1 and buttonCounter < 100:
                 if  count == 0:
                     self.tgMenu()
                     break
@@ -299,4 +337,6 @@ class UI:
                 elif count == 3:
                     self.setDisplay()
                     break
+            if buttonCounter > 100:
+                break
     
