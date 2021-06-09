@@ -5,6 +5,7 @@ from gpiozero import LED
 from gpiozero import Button
 from encoder import Encoder
 import time
+import lcdMenu
 
 class UI:
 
@@ -85,20 +86,18 @@ class UI:
             return "ERROR"
         
 
-    def UpdateDisplay(self, currentState, tgid, freq, srcaddr, bitrate, signalStrength, displayOption = 0):
-        if displayOption == 0:
+    def UpdateDisplay(self, currentState, tgid, freq, srcaddr, bitrate, signalStrength):
+        if self.displayOption == 0:
             self.lcd.set_cursor(0,0)
-            self.lcd.message(str(srcaddr).ljust(14, ' '))
-            self.lcd.message(str(signalStrength.to_bytes(1, byteorder='big')))
-            self.lcd.message('\x06')
+            self.lcd.message(str(srcaddr).ljust(14, ' ') + str(signalStrength).ljust(2, ' '))
             self.lcd.set_cursor(0,1)
             self.lcd.message(self.tgId2Name(tgid).ljust(10, ' ') + self.CurrentStateString(currentState).rjust(6, ' '))
-        elif displayOption == 1:
+        elif self.displayOption == 1:
             self.lcd.set_cursor(0,0)
             self.lcd.message(self.tgId2Name(tgid).ljust(11, ' ') + str(freq).rjust(5, ' '))
             self.lcd.set_cursor(0,1)
             self.lcd.message(str(srcaddr).ljust(10, ' ') + self.CurrentStateString().rjust(6, ' '))
-        elif displayOption == 3:
+        elif self.displayOption == 3:
             self.lcd.set_cursor(0,0)
             self.lcd.message(str(srcaddr).ljust(10, ' ') + str(bitrate).rjust(6, ' '))
             self.lcd.set_cursor(0,1)
@@ -111,158 +110,76 @@ class UI:
         return i + 1
 
     def tgMenu(self):
-        self.red.off()
-        self.blue.off()
-        self.green.off()
-        self.lcd.clear()
-        self.lcd.set_cursor(0,0)
-        self.lcd.message("Choose TG GROUP>")
-        time.sleep(1)
-        self.lcd.set_cursor(0,1)
-        catNumLines = self.file_len(self.talkGroupCatagoriesFile)
+        menuOptions = self.talkGroupCatagories['GROUP'].to_list()
+        tgSearch = self.talkGroupCatagories['SEARCH'].to_lis()
+        mn = lcdMenu.lcdMenu(self.lcd, "CHOOSE TG GROUP >", len(menuOptions), menuOptions, self.enc, self.red, self.green, self.blue)
+        mn.menuDraw()
 
-        self.enc.value = 0
-        previousEncVal = -1
-        buttonCounter = 0
-        buttonPressedFlag = False
-        name = ""
-        while True:
-            value = self.enc.getValue()
-            if value != previousEncVal :
-                if value < 0:
-                    value = catNumLines - 1
-                if value >= catNumLines:
-                    value = 0
-                self.lcd.set_cursor(0,1)
-                name = self.talkGroupCatagories.loc[value].at['GROUP']
-                tgsearchname = self.talkGroupCatagories.loc[value].at['SEARCH']
-                self.lcd.message(name.ljust(16, ' '))
-                previousEncVal = value
+        option = mn.menuLoop()
 
-            while self.button.is_pressed:
-                buttonCounter += 1
-                buttonPressedFlag = True
-                time.sleep(0.01)
-                if buttonCounter > 1:
-                    self.green.on()
-                if buttonCounter > 100:
-                    self.red.on()
-            
-            if buttonPressedFlag:
-                if buttonCounter < 100:
-                    print(tgsearchname)
-                    self.tgChange(tgsearchname)
-                    break
-                elif buttonCounter >= 100:
-                    break
+        if option[1] == 1:
+            self.tgChange(tgSearch[option[2]])
 
     def tgChange(self, groupName):
-    
-        self.red.off()
-        self.blue.off()
-        self.green.off()
+        
         self.lcd.clear()
         self.lcd.set_cursor(0,0)
-        self.lcd.message("Choose TG      >")
-        self.lcd.set_cursor(0,1)
+        self.lcd.message("LOADING...")
+        sortedTGList = []
+        sortedTGListNames = []
+        for tg in range(self.file_len(self.talkGroupFile)):
+            if groupName in self.tgId2Name(self.count2tgid(tg)):
+                tgid = self.count2tgid(tg)
+                sortedTGList.append(tgid)
+                sortedTGListNames.append(self.tgId2Name(tgid))
+        print(sortedTGList)
+        print(sortedTGListNames)
+
         
         tgidList = []
 
-        tgNumLines = self.file_len(self.talkGroupFile)
 
-        self.enc.value = 0
-        previousEncVal = -1
-        buttonCounter = 0
-        buttonPressedFlag = False
-        time.sleep(1)
-        SpinningCursor = ['\\', '|', '/', '-']
+        mn = lcdMenu.lcdMenu(self.lcd, "SELECT TG >", len(sortedTGListNames), sortedTGListNames, self.enc, self.red, self.green, self.blue)
+        mn.menuDraw()
         while True:
-            value = self.enc.getValue()
-            if value != previousEncVal :
-                if value < 0:
-                    value = tgNumLines - 1
-                if value >= tgNumLines:
-                    value = 0
-                self.lcd.set_cursor(0,1)
-                name = self.tgId2Name(self.count2tgid(value))
-                if groupName in name:
-                    self.lcd.message(str(name).ljust(16, ' '))
-                    previousEncVal = value
-                else:
-                    self.enc.value -= 1
-                    name = self.tgId2Name(self.count2tgid(self.enc.value))
-                    if groupName in name:
-                        pass
-                    else:
-                        self.enc.value += 2
-                        name = self.tgId2Name(self.count2tgid(self.enc.value))
-                        if groupName in name:
-                            pass
-                        else:
-                            self.enc.value += 1
-                    self.lcd.message(SpinningCursor[self.enc.value % 4].ljust(16, ' '))
-                    
-
-            while self.button.is_pressed:
-                buttonCounter += 1
-                buttonPressedFlag = True
-                time.sleep(0.01)
-                if buttonCounter > 1:
-                    self.green.on()
-                if buttonCounter > 100:
+            option = mn.menuLoop()
+        
+            if option[1] == 1:
+                if sortedTGList[option[2]] not in tgidList:
+                    tgidList.append(sortedTGList[option[2]])
+                    mn.menuDraw()
+            elif option[1] == 2:
+                f = open("wl.wlist", 'a')
+                for id in tgidList:
+                    f.write(str(id) + "\n\r")
+                f.close()
+                self.lcd.set_cursor(0,0)
+                self.lcd.message("Saved TG List\nStarting Radio...")
+                self.red.off()
+                self.blue.off()
+                self.green.off()
+                time.sleep(0.5)
+                break
+            elif option[1] == 3:
+                for x in  range(5):
                     self.red.on()
-                if buttonCounter > 200:
                     self.blue.on()
+                    self.green.on()
+                    time.sleep(0.05)
+                    self.red.off()
+                    self.blue.off()
+                    self.green.off()
+                    time.sleep(0.05)
+                f = open("wl.wlist", 'w')
+                f.write("")
+                f.close()
+                self.lcd.set_cursor(0,0)
+                tgidList = []
+                self.lcd.message("WHITE LIST\nCLEARED")
+                time.sleep(1)
+                mn.menuDraw()
 
-            if buttonPressedFlag:
-                buttonPressedFlag = False;
-                if buttonCounter > 1:
-                    print(tgidList)
-                    if buttonCounter < 100:
-                        if self.count2tgid(value) not in tgidList:
-                            tgidList.append(self.count2tgid(value))
-                            buttonCounter = 0
-                            self.enc.value = 0
-                            time.sleep(0.05)
-                            self.red.off()
 
-                    elif buttonCounter >= 100 and buttonCounter < 200:
-                        f = open("wl.wlist", 'a')
-                        for id in tgidList:
-                            f.write(str(id) + "\n\r")
-                        f.close()
-                        self.lcd.set_cursor(0,0)
-                        self.lcd.message("Saved TG List\nStarting Radio...")
-                        self.red.off()
-                        self.blue.off()
-                        self.green.off()
-                        time.sleep(0.5)
-                        break
-                    
-                    elif buttonCounter >= 200:
-                        for x in  range(5):
-                            self.red.on()
-                            self.blue.on()
-                            self.green.on()
-                            time.sleep(0.05)
-                            self.red.off()
-                            self.blue.off()
-                            self.green.off()
-                            time.sleep(0.05)
-                        f = open("wl.wlist", 'w')
-                        f.write("")
-                        f.close()
-                        self.lcd.set_cursor(0,0)
-                        tgidList = []
-                        self.lcd.message("WHITE LIST\nCLEARED")
-                        time.sleep(1)
-                        buttonCounter = 0
-                        self.lcd.clear()
-                        self.lcd.set_cursor(0,0)
-                        self.lcd.message("Choose TG      >")
-                        self.lcd.set_cursor(0,1)
-                        name = self.tgId2Name(self.count2tgid(self.enc.value))
-                        self.lcd.message(str(name).ljust(16, ' '))
 
     def currentTg(self):
         whiteList = pandas.read_csv('wl.wlist', sep=',', header=None, names=['TG'], dtype="string")
@@ -292,54 +209,24 @@ class UI:
             if buttonCounter > 1:
                 break
 
+    def setDisplay(self):
+        menuOption = ["<  DISPLAY  1  >", "<  DISPLAY  2  >", "<  DISPLAY  3  >", "<  DISPLAY  4  >",]
+        mn = lcdMenu.lcdMenu(self.lcd, "CHOOSE DISPLAY >", len(menuOption), menuOption, self.enc, self.red, self.green, self.blue)
+        mn.menuDraw()
+        option = mn.menuLoop()
+        
 
     def menu(self):
         menuOption = ["<   SET TGID   >", "< CURRENT TGID >", "<   LCD  RGB   >", "<   DISPLAY    >"]
-        self.red.off()
-        self.blue.off()
-        self.green.off()
-        self.lcd.clear()
-        self.lcd.set_cursor(0,0)
-        self.lcd.message("Menu")
-        self.lcd.set_cursor(0,1)
-        self.enc.value = 0
-        prevcount = -1
-        buttonCounter = 0
-        time.sleep(0.5)
-        while True:
-            if self.enc.getValue() < 0:
-                self.enc.value = len(menuOption) - 1
-            if self.enc.getValue() > len(menuOption) - 1:
-                self.enc.value = 0
-            if self.enc.getValue() != prevcount:
-                count = self.enc.getValue()
-                self.lcd.set_cursor(0,1)
-                self.lcd.message(menuOption[count])
-                prevcount = count
-            while self.button.is_pressed:
-                buttonCounter += 1
-                time.sleep(0.01)
-                if buttonCounter > 1:
-                    self.green.on()
-                elif buttonCounter > 100:
-                    self.red.on()
-            
-            if buttonCounter > 1 and buttonCounter < 100:
-                if  count == 0:
-                    self.tgMenu()
-                    break
-                elif count == 1:
-                    self.currentTg()
-                    break
-                elif count == 2:
-                    self.setRGB()
-                    break
-                elif count == 3:
-                    self.setDisplay()
-                    break
-            if buttonCounter > 100:
-                break
-
-
-
-    
+        mn = lcdMenu.lcdMenu(self.lcd, "MAIN MENU", len(menuOption), menuOption, self.enc, self.red, self.green, self.blue)
+        mn.menuDraw()
+        option = mn.menuLoop()
+        if option[1] == 1:
+            if option[2] == 0:
+                self.tgMenu()
+            elif option[2] == 1:
+                self.currentTg()
+            elif option[2] == 2:
+                self.setRGB()
+            elif option[2] == 3:
+                self.setDisplay()   
