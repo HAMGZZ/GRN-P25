@@ -260,7 +260,7 @@ class UI:
         value = self.twist.get_count()
         previousEncVal = 0
         value = self.twist.get_count()
-        self.twist.set_count() = 0
+        self.twist.set_count(0)
         buttonCounter = 0
         while True:
             value = self.twist.get_count()
