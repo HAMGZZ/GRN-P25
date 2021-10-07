@@ -3,7 +3,7 @@ import pandas
 import Adafruit_CharLCD as LCD
 import board
 import busio
-import sparkfun_qwiictwist
+import qwiic_twist
 import time
 
 class UI:
