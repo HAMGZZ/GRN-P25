@@ -17,7 +17,7 @@ class UI:
         lcd_d4 = 25
         lcd_d5 = 24
         lcd_d6 = 23
-        lcd_d7 = 18
+        lcd_d7 = 6
         lcd_red   = 4
         lcd_green = 17
         lcd_blue  = 7  # Pin 7 is CE1
