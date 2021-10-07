@@ -199,7 +199,7 @@ class UI:
                     self.lcd.message(SpinningCursor[self.twist.get_value() % 4].ljust(16, ' '))
                     
 
-            while self.button.is_pressed:
+            while self.twist.is_pressed():
                 buttonCounter += 1
                 buttonPressedFlag = True
                 time.sleep(0.01)
