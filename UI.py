@@ -1,9 +1,12 @@
 
 import pandas
 import Adafruit_CharLCD as LCD
-from gpiozero import LED
-from gpiozero import Button
-from encoder import Encoder
+#from gpiozero import LED
+#from gpiozero import Button
+#from encoder import Encoder
+import board
+import busio
+import sparkfun_qwiictwist
 import time
 
 class UI:
@@ -19,11 +22,20 @@ class UI:
         lcd_green = 17
         lcd_blue  = 7  # Pin 7 is CE1
         self.lcd = LCD.Adafruit_RGBCharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, 16, 2, lcd_red, lcd_green, lcd_blue)
-        self.red = LED(12)
-        self.green = LED(16)
-        self.blue = LED(20)
-        self.button = Button(13)
-        self.enc = Encoder(26,19)
+        
+        
+        
+
+        self.i2c = busio.I2C(board.SCL, board.SDA)
+        self.twist = sparkfun_qwiictwist.Sparkfun_QwiicTwist(self.i2c)
+        if twist.connected:
+            print("Connected to UI")
+        else:
+            print("Could not connect to UI!")
+            exit()
+        
+
+        
         self.talkGroupFile = talkGroupFile
         self.talkGroupCatagoriesFile = talkGroupCatagoriesFile
         self.talkGroups = pandas.read_csv(talkGroupFile, sep='\t', header=None, names=['TGID', 'TGNAME'])
@@ -59,29 +71,31 @@ class UI:
             currTime = time.time_ns()
             if currTime - self.prevTime > 5000:
                 self.prevTime = currTime
-                self.red.off()
-                self.green.toggle()
-                self.blue.off()
+                self.twist.set_colour(0,0,0)
             return "NO CON"
         elif CurrentState == 1:
             self.red.off()
             self.green.on()
             self.blue.off()
+            self.twist.set_colour(0,255,0)
             return "IDLE"
         elif CurrentState == 2:
             self.red.on()
             self.green.on()
             self.blue.off()
+            self.twist.set_colour(255,255,0)
             return "DATA"
         elif CurrentState == 3:
             self.red.on()
             self.green.on()
             self.blue.on()
+            self.twist.set_colour(255,255,255)
             return "VOICE"
         else:
             self.red.off()
             self.green.off()
             self.blue.off()
+            self.twist.set_colour(0,0,0)
             return "ERROR"
         
 
@@ -114,6 +128,7 @@ class UI:
         self.red.off()
         self.blue.off()
         self.green.off()
+        self.twist.set_colour(0,0,0)
         self.lcd.clear()
         self.lcd.set_cursor(0,0)
         self.lcd.message("Choose TG GROUP>")
@@ -121,6 +136,7 @@ class UI:
         self.lcd.set_cursor(0,1)
         catNumLines = self.file_len(self.talkGroupCatagoriesFile)
 
+        self.twist.count = 0
         self.enc.value = 0
         previousEncVal = -1
         buttonCounter = 0
@@ -139,7 +155,7 @@ class UI:
                 self.lcd.message(name.ljust(16, ' '))
                 previousEncVal = value
 
-            while self.button.is_pressed:
+            while self.twist.pressed:
                 buttonCounter += 1
                 buttonPressedFlag = True
                 time.sleep(0.01)
