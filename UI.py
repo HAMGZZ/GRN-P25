@@ -30,6 +30,8 @@ class UI:
         else:
             print("Could not connect to UI!")
             exit()
+
+        self.twist.begin()
         
 
         
