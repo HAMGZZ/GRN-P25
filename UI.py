@@ -70,19 +70,19 @@ class UI:
             currTime = time.time_ns()
             if currTime - self.prevTime > 5000:
                 self.prevTime = currTime
-                self.twist.set_colour(0,0,0)
+                self.twist.set_colour(255,255,255)
             return "NO CON"
         elif CurrentState == 1:
-            self.twist.set_colour(0,255,0)
+            self.twist.set_colour(255,0,255)
             return "IDLE"
         elif CurrentState == 2:
-            self.twist.set_colour(255,255,0)
+            self.twist.set_colour(0,0,255)
             return "DATA"
         elif CurrentState == 3:
-            self.twist.set_colour(255,255,255)
+            self.twist.set_colour(0,0,0)
             return "VOICE"
         else:
-            self.twist.set_colour(0,0,0)
+            self.twist.set_colour(255,255,255)
             return "ERROR"
         
 
@@ -112,7 +112,7 @@ class UI:
         return i + 1
 
     def tgMenu(self):
-        self.twist.set_colour(0,0,0)
+        self.twist.set_colour(255,255,255)
         self.lcd.clear()
         self.lcd.set_cursor(0,0)
         self.lcd.message("Choose TG GROUP>")
@@ -144,9 +144,9 @@ class UI:
                 buttonPressedFlag = True
                 time.sleep(0.01)
                 if buttonCounter > 1:
-                    self.twist.set_colour(0,255,0)
+                    self.twist.set_colour(255,0,255)
                 if buttonCounter > 100:
-                    self.twist.set_colour(255,255,0)
+                    self.twist.set_colour(0,0,255)
             
             if buttonPressedFlag:
                 if buttonCounter < 100:
@@ -158,7 +158,7 @@ class UI:
 
     def tgChange(self, groupName):
     
-        self.twist.set_colour(0,0,0)
+        self.twist.set_colour(255,255,255)
         self.lcd.clear()
         self.lcd.set_cursor(0,0)
         self.lcd.message("Choose TG      >")
@@ -206,11 +206,11 @@ class UI:
                 buttonPressedFlag = True
                 time.sleep(0.01)
                 if buttonCounter > 1:
-                    self.twist.set_colour(0,255,0)
+                    self.twist.set_colour(255,0,255)
                 if buttonCounter > 100:
-                    self.twist.set_colour(255,255,0)
+                    self.twist.set_colour(0,0,255)
                 if buttonCounter > 200:
-                    self.twist.set_colour(255,255,255)
+                    self.twist.set_colour(0,0,0)
 
             if buttonPressedFlag:
                 buttonPressedFlag = False;
@@ -222,7 +222,7 @@ class UI:
                             buttonCounter = 0
                             self.twist.set_count(0)
                             time.sleep(0.05)
-                            self.twist.set_colour(0,0,0)
+                            self.twist.set_colour(255,255,255)
 
                     elif buttonCounter >= 100 and buttonCounter < 200:
                         f = open("wl.wlist", 'a')
@@ -231,15 +231,15 @@ class UI:
                         f.close()
                         self.lcd.set_cursor(0,0)
                         self.lcd.message("Saved TG List\nStarting Radio...")
-                        self.twist.set_colour(0,0,0)
+                        self.twist.set_colour(255,255,255)
                         time.sleep(0.5)
                         break
                     
                     elif buttonCounter >= 200:
                         for x in  range(5):
-                            self.twist.set_colour(255,255,255)
-                            time.sleep(0.05)
                             self.twist.set_colour(0,0,0)
+                            time.sleep(0.05)
+                            self.twist.set_colour(255,255,255)
                             time.sleep(0.05)
                         f = open("wl.wlist", 'w')
                         f.write("")
@@ -279,7 +279,7 @@ class UI:
                 buttonCounter += 1
                 time.sleep(0.01)
                 if buttonCounter > 1:
-                    self.twist.set_colour(0,255,0)
+                    self.twist.set_colour(255,0,255)
 
             if buttonCounter > 1:
                 break
@@ -287,7 +287,7 @@ class UI:
 
     def menu(self):
         menuOption = ["<   SET TGID   >", "< CURRENT TGID >", "<   LCD  RGB   >", "<   DISPLAY    >"]
-        self.twist.set_colour(0,0,0)
+        self.twist.set_colour(255,255,255)
         self.lcd.clear()
         self.lcd.set_cursor(0,0)
         self.lcd.message("Menu")
@@ -306,9 +306,9 @@ class UI:
                 buttonCounter += 1
                 time.sleep(0.01)
                 if buttonCounter > 1:
-                    self.twist.set_colour(0,255,0)
+                    self.twist.set_colour(255,0,255)
                 elif buttonCounter > 100:
-                    self.twist.set_colour(255,255,0)
+                    self.twist.set_colour(0,0,255)
             
             if buttonCounter > 1 and buttonCounter < 100:
                 if  count == 0:

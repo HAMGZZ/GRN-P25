@@ -34,7 +34,7 @@ def main():
 
     data = op25Data.Data()
     ui = UI.UI('grn.tsv', 'groupList.csv')
-    ui.twist.set_colour(0,0,0)
+    ui.twist.set_colour(255,255,255)
     
     while True:
         data.updateData()
