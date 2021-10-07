@@ -39,7 +39,7 @@ def main():
     while True:
         data.updateData()
         ui.UpdateDisplay(data.CurrentState, data.tgid, data.freq, data.srcaddr, data.dataRate, data.signalStrength)
-        if ui.button.is_pressed:
+        if ui.twist.is_pressed():
             killp25()
             time.sleep(0.5)
             ui.menu()
