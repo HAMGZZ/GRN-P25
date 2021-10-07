@@ -39,7 +39,7 @@ def main():
     while True:
         data.updateData()
         ui.UpdateDisplay(data.CurrentState, data.tgid, data.freq, data.srcaddr, data.dataRate, data.signalStrength)
-        print("BUTTON? ")
+        print("BUTTON? " + str(ui.twist.is_pressed()))
         # if ui.twist.is_pressed() == True:
             # print("ENTERING MENU")
             # killp25()
