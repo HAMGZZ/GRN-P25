@@ -25,7 +25,7 @@ class UI:
 
         self.i2c = busio.I2C(board.SCL, board.SDA)
         self.twist = qwiic_twist.QwiicTwist(self.i2c)
-        if twist.connected:
+        if self.twist.connected:
             print("Connected to UI")
         else:
             print("Could not connect to UI!")
