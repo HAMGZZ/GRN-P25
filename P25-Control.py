@@ -41,13 +41,13 @@ def main():
         ui.UpdateDisplay(data.CurrentState, data.tgid, data.freq, data.srcaddr, data.dataRate, data.signalStrength)
         print("BUTTON? ")
         print(ui.twist.is_pressed())
-        if ui.twist.is_pressed() == True:
-            print("ENTERING MENU")
-            killp25()
-            time.sleep(0.5)
-            ui.menu()
-            time.sleep(0.5)
-            op25 = subprocess.Popen("./startop25.sh", shell = False)
+        # if ui.twist.is_pressed() == True:
+            # print("ENTERING MENU")
+            # killp25()
+            # time.sleep(0.5)
+            # ui.menu()
+            # time.sleep(0.5)
+            # op25 = subprocess.Popen("./startop25.sh", shell = False)
 
 
 if __name__ == '__main__':
