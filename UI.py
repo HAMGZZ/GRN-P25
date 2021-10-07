@@ -139,7 +139,7 @@ class UI:
                 self.lcd.message(name.ljust(16, ' '))
                 previousEncVal = value
 
-            while not self.twist.is_pressed():
+            while self.twist.is_pressed():
                 buttonCounter += 1
                 buttonPressedFlag = True
                 time.sleep(0.01)
@@ -201,7 +201,7 @@ class UI:
                     self.lcd.message(SpinningCursor[self.twist.get_value() % 4].ljust(16, ' '))
                     
 
-            while not self.twist.is_pressed():
+            while self.twist.is_pressed():
                 buttonCounter += 1
                 buttonPressedFlag = True
                 time.sleep(0.01)
@@ -275,7 +275,7 @@ class UI:
                 name = self.tgId2Name(whiteList.loc[value].at['TG'])
                 self.lcd.message(str(name).ljust(16, ' '))
                 previousEncVal = value
-            while not self.twist.is_pressed():
+            while self.twist.is_pressed():
                 buttonCounter += 1
                 time.sleep(0.01)
                 if buttonCounter > 1:
@@ -302,7 +302,7 @@ class UI:
                 self.lcd.set_cursor(0,1)
                 self.lcd.message(menuOption[count])
                 prevcount = count
-            while not self.twist.is_pressed():
+            while self.twist.is_pressed():
                 buttonCounter += 1
                 time.sleep(0.01)
                 if buttonCounter > 1:
