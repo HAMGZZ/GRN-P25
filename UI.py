@@ -1,9 +1,6 @@
 
 import pandas
 import Adafruit_CharLCD as LCD
-#from gpiozero import LED
-#from gpiozero import Button
-#from encoder import Encoder
 import board
 import busio
 import sparkfun_qwiictwist
@@ -74,27 +71,15 @@ class UI:
                 self.twist.set_colour(0,0,0)
             return "NO CON"
         elif CurrentState == 1:
-            self.red.off()
-            self.green.on()
-            self.blue.off()
             self.twist.set_colour(0,255,0)
             return "IDLE"
         elif CurrentState == 2:
-            self.red.on()
-            self.green.on()
-            self.blue.off()
             self.twist.set_colour(255,255,0)
             return "DATA"
         elif CurrentState == 3:
-            self.red.on()
-            self.green.on()
-            self.blue.on()
             self.twist.set_colour(255,255,255)
             return "VOICE"
         else:
-            self.red.off()
-            self.green.off()
-            self.blue.off()
             self.twist.set_colour(0,0,0)
             return "ERROR"
         
@@ -125,9 +110,6 @@ class UI:
         return i + 1
 
     def tgMenu(self):
-        self.red.off()
-        self.blue.off()
-        self.green.off()
         self.twist.set_colour(0,0,0)
         self.lcd.clear()
         self.lcd.set_cursor(0,0)
@@ -137,13 +119,13 @@ class UI:
         catNumLines = self.file_len(self.talkGroupCatagoriesFile)
 
         self.twist.count = 0
-        self.enc.value = 0
+        self.twist.set_count(0)
         previousEncVal = -1
         buttonCounter = 0
         buttonPressedFlag = False
         name = ""
         while True:
-            value = self.enc.getValue()
+            value = self.twist.get_count()
             if value != previousEncVal :
                 if value < 0:
                     value = catNumLines - 1
@@ -155,14 +137,14 @@ class UI:
                 self.lcd.message(name.ljust(16, ' '))
                 previousEncVal = value
 
-            while self.twist.pressed:
+            while self.twist.is_pressed():
                 buttonCounter += 1
                 buttonPressedFlag = True
                 time.sleep(0.01)
                 if buttonCounter > 1:
-                    self.green.on()
+                    self.twist.set_colour(0,255,0)
                 if buttonCounter > 100:
-                    self.red.on()
+                    self.twist.set_colour(255,255,0)
             
             if buttonPressedFlag:
                 if buttonCounter < 100:
@@ -174,9 +156,7 @@ class UI:
 
     def tgChange(self, groupName):
     
-        self.red.off()
-        self.blue.off()
-        self.green.off()
+        self.twist.set_colour(0,0,0)
         self.lcd.clear()
         self.lcd.set_cursor(0,0)
         self.lcd.message("Choose TG      >")
@@ -186,14 +166,14 @@ class UI:
 
         tgNumLines = self.file_len(self.talkGroupFile)
 
-        self.enc.value = 0
+        self.twist.set_count(0)
         previousEncVal = -1
         buttonCounter = 0
         buttonPressedFlag = False
         time.sleep(1)
         SpinningCursor = ['\\', '|', '/', '-']
         while True:
-            value = self.enc.getValue()
+            value = self.twist.get_count()
             if value != previousEncVal :
                 if value < 0:
                     value = tgNumLines - 1
@@ -205,18 +185,18 @@ class UI:
                     self.lcd.message(str(name).ljust(16, ' '))
                     previousEncVal = value
                 else:
-                    self.enc.value -= 1
-                    name = self.tgId2Name(self.count2tgid(self.enc.value))
+                    self.twist.set_count(-1)
+                    name = self.tgId2Name(self.count2tgid(self.twist.get_value()))
                     if groupName in name:
                         pass
                     else:
-                        self.enc.value += 2
-                        name = self.tgId2Name(self.count2tgid(self.enc.value))
+                        self.twist.set_value(self.twist.get_value() + 2)
+                        name = self.tgId2Name(self.count2tgid(self.twist.get_value()))
                         if groupName in name:
                             pass
                         else:
-                            self.enc.value += 1
-                    self.lcd.message(SpinningCursor[self.enc.value % 4].ljust(16, ' '))
+                            self.twist.set_value(self.twist.get_value() + 1)
+                    self.lcd.message(SpinningCursor[self.twist.get_value() % 4].ljust(16, ' '))
                     
 
             while self.button.is_pressed:
@@ -224,11 +204,11 @@ class UI:
                 buttonPressedFlag = True
                 time.sleep(0.01)
                 if buttonCounter > 1:
-                    self.green.on()
+                    self.twist.set_colour(0,255,0)
                 if buttonCounter > 100:
-                    self.red.on()
+                    self.twist.set_colour(255,255,0)
                 if buttonCounter > 200:
-                    self.blue.on()
+                    self.twist.set_colour(255,255,255)
 
             if buttonPressedFlag:
                 buttonPressedFlag = False;
@@ -238,9 +218,9 @@ class UI:
                         if self.count2tgid(value) not in tgidList:
                             tgidList.append(self.count2tgid(value))
                             buttonCounter = 0
-                            self.enc.value = 0
+                            self.twist.set_count(0)
                             time.sleep(0.05)
-                            self.red.off()
+                            self.twist.set_colour(0,0,0)
 
                     elif buttonCounter >= 100 and buttonCounter < 200:
                         f = open("wl.wlist", 'a')
@@ -249,21 +229,15 @@ class UI:
                         f.close()
                         self.lcd.set_cursor(0,0)
                         self.lcd.message("Saved TG List\nStarting Radio...")
-                        self.red.off()
-                        self.blue.off()
-                        self.green.off()
+                        self.twist.set_colour(0,0,0)
                         time.sleep(0.5)
                         break
                     
                     elif buttonCounter >= 200:
                         for x in  range(5):
-                            self.red.on()
-                            self.blue.on()
-                            self.green.on()
+                            self.twist.set_colour(255,255,255)
                             time.sleep(0.05)
-                            self.red.off()
-                            self.blue.off()
-                            self.green.off()
+                            self.twist.set_colour(0,0,0)
                             time.sleep(0.05)
                         f = open("wl.wlist", 'w')
                         f.write("")
@@ -277,19 +251,19 @@ class UI:
                         self.lcd.set_cursor(0,0)
                         self.lcd.message("Choose TG      >")
                         self.lcd.set_cursor(0,1)
-                        name = self.tgId2Name(self.count2tgid(self.enc.value))
+                        name = self.tgId2Name(self.count2tgid(self.twist.get_count()))
                         self.lcd.message(str(name).ljust(16, ' '))
 
     def currentTg(self):
         whiteList = pandas.read_csv('wl.wlist', sep=',', header=None, names=['TG'], dtype="string")
         fileLen = self.file_len('wl.wlist')
-        value = self.enc.getValue()
+        value = self.twist.get_count()
         previousEncVal = 0
-        value = self.enc.getValue()
-        self.enc.value = 0
+        value = self.twist.get_count()
+        self.twist.set_count() = 0
         buttonCounter = 0
         while True:
-            value = self.enc.getValue()
+            value = self.twist.get_count()
             if value != previousEncVal :
                 if value < 0:
                     value = fileLen - 1
@@ -299,11 +273,11 @@ class UI:
                 name = self.tgId2Name(whiteList.loc[value].at['TG'])
                 self.lcd.message(str(name).ljust(16, ' '))
                 previousEncVal = value
-            while self.button.is_pressed:
+            while self.twist.is_pressed():
                 buttonCounter += 1
                 time.sleep(0.01)
                 if buttonCounter > 1:
-                    self.green.on()
+                    self.twist.set_colour(0,255,0)
 
             if buttonCounter > 1:
                 break
@@ -311,34 +285,28 @@ class UI:
 
     def menu(self):
         menuOption = ["<   SET TGID   >", "< CURRENT TGID >", "<   LCD  RGB   >", "<   DISPLAY    >"]
-        self.red.off()
-        self.blue.off()
-        self.green.off()
+        self.twist.set_colour(0,0,0)
         self.lcd.clear()
         self.lcd.set_cursor(0,0)
         self.lcd.message("Menu")
         self.lcd.set_cursor(0,1)
-        self.enc.value = 0
+        self.twist.set_count(0)
         prevcount = -1
         buttonCounter = 0
         time.sleep(0.5)
         while True:
-            if self.enc.getValue() < 0:
-                self.enc.value = len(menuOption) - 1
-            if self.enc.getValue() > len(menuOption) - 1:
-                self.enc.value = 0
-            if self.enc.getValue() != prevcount:
-                count = self.enc.getValue()
+            if self.twist.get_count() != prevcount:
+                count = self.twist.get_count()
                 self.lcd.set_cursor(0,1)
                 self.lcd.message(menuOption[count])
                 prevcount = count
-            while self.button.is_pressed:
+            while self.twist.is_pressed():
                 buttonCounter += 1
                 time.sleep(0.01)
                 if buttonCounter > 1:
-                    self.green.on()
+                    self.twist.set_colour(0,255,0)
                 elif buttonCounter > 100:
-                    self.red.on()
+                    self.twist.set_colour(255,255,0)
             
             if buttonCounter > 1 and buttonCounter < 100:
                 if  count == 0:
