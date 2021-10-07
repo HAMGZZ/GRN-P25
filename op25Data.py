@@ -57,8 +57,6 @@ class Data:
                     self.signalStrength = 1
                 else:
                     self.signalStrength = 0
-                print(difference)
-                print(self.isCon)
         except:
             pass
         if not self.isCon:
