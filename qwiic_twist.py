@@ -385,7 +385,7 @@ class QwiicTwist(object):
     #
     # Sets the color of the encoder LEDs
 
-    def set_color(self, red, green, blue):
+    def set_colour(self, red, green, blue):
         """
             Sets the color of the encoder LEDs
 
